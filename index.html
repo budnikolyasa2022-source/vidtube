@@ -1,0 +1,1394 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f0f0f">
+<title>VidTube 0.1.6.1α</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23ff0033'/><path d='M12 9l11 7-11 7z' fill='white'/></svg>">
+<style>
+:root{--bg:#0f0f0f;--bg2:#181818;--bg3:#272727;--text:#f1f1f1;--muted:#aaa;--accent:#ff0033;--border:#303030;--radius:12px;--header-h:56px;--bottom-nav-h:56px;--sidebar-w:220px;--card-bg:#181818;--hover:rgba(255,255,255,.06);--overlay:rgba(0,0,0,.75);--hashtag:#6cb6ff}
+[data-theme="light"]{--bg:#ffffff;--bg2:#f5f5f5;--bg3:#e8e8e8;--text:#0f0f0f;--muted:#606060;--border:#e0e0e0;--card-bg:#ffffff;--hover:rgba(0,0,0,.05);--overlay:rgba(0,0,0,.4);--hashtag:#065fd4}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{overflow-x:hidden;width:100%}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh;transition:background .2s,color .2s;width:100%;overflow-x:hidden;position:relative}
+button,input,textarea,select{font-family:inherit;font-size:16px}
+button{cursor:pointer;border:none;color:inherit}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.hashtag{color:var(--hashtag);cursor:pointer;font-weight:500}
+.hashtag:active{opacity:.7}
+header{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg);border-bottom:1px solid var(--border);min-height:var(--header-h);transition:background .2s;width:100%}
+.logo{font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;padding:4px 6px;border-radius:10px;flex-shrink:0}
+.logo .dot{width:24px;height:16px;background:var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;flex-shrink:0}
+.logo .ver{font-size:9px;color:var(--muted);font-weight:600;background:var(--bg3);padding:2px 5px;border-radius:5px}
+.search{flex:1;display:none;max-width:520px}
+.search input{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:20px 0 0 20px;padding:10px 14px;color:var(--text);outline:none;font-size:14px;min-width:0}
+.search button{background:var(--bg3);border:1px solid var(--border);border-left:none;border-radius:0 20px 20px 0;padding:0 16px;font-size:14px;min-height:40px}
+.icon-circle{background:var(--bg2);border:1px solid var(--border);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;position:relative;padding:0}
+.top-search-btn{display:flex;margin-left:auto}
+.bell-badge{position:absolute;top:-3px;right:-3px;min-width:17px;height:17px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:0 4px;border-radius:9px;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg)}
+#authArea{display:flex;gap:5px;align-items:center;flex-shrink:1;min-width:0}
+.user-chip{display:flex;align-items:center;gap:5px;padding:3px 10px 3px 3px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;font-size:12px;max-width:150px;cursor:pointer;flex-shrink:1;min-width:0}
+.user-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#ff0033,#ff8a00);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden}
+.mini-avatar img{width:100%;height:100%;object-fit:cover}
+.auth-btn{background:transparent;border:1px solid var(--border);padding:7px 10px;border-radius:20px;font-size:12px;white-space:nowrap;min-height:34px;flex-shrink:0}
+.auth-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+main{padding-bottom:calc(var(--bottom-nav-h) + 16px + env(safe-area-inset-bottom));width:100%;overflow-x:hidden}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:90;background:var(--bg);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom);transition:background .2s}
+.bottom-nav button{flex:1;background:none;padding:6px 2px 5px;font-size:9px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;min-height:52px}
+.bottom-nav button.active{color:var(--text)}
+.bottom-nav button.active .ic{color:var(--accent)}
+.bottom-nav .ic{font-size:19px;line-height:1}
+.bottom-nav .plus{width:32px;height:32px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:18px}
+.sidebar{display:none}
+
+.banner{height:110px;background:linear-gradient(120deg,#ff0033,#ff8a00,#7a00ff);background-size:cover;background-position:center;width:100%}
+.chan-header{padding:0 14px;margin-top:-38px;width:100%}
+.chan-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#ff0033,#ff8a00);border:3px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:34px;color:#fff;font-weight:700;overflow:hidden}
+.chan-avatar img{width:100%;height:100%;object-fit:cover}
+.chan-info{margin-top:10px}
+.chan-name{font-size:20px;font-weight:700;margin-bottom:5px;word-break:break-word}
+.chan-stats{color:var(--muted);font-size:12px;margin-bottom:10px;word-break:break-word}
+.chan-actions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.edit-btn{background:var(--bg3);border:none;padding:9px 14px;border-radius:20px;font-size:12px;font-weight:600;min-height:38px}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);padding:0 14px;margin-top:6px;overflow-x:auto;width:100%;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:none;border:none;color:var(--muted);padding:12px 12px;font-size:12px;font-weight:600;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0}
+.tab.active{color:var(--text);border-bottom-color:var(--text)}
+.chan-home{padding:14px;width:100%}
+.featured-video{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;cursor:pointer}
+.featured-video .thumb{width:100%;aspect-ratio:16/9;max-height:60vh;background:#000;position:relative;overflow:hidden}
+.featured-video .thumb img{width:100%;height:100%;object-fit:cover}
+.featured-label{display:inline-block;background:rgba(255,0,51,.15);color:var(--accent);font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;margin-bottom:8px;letter-spacing:.3px;text-transform:uppercase}
+.featured-video .info{padding:12px}
+.featured-video .info h3{font-size:15px;font-weight:600;margin-bottom:6px;line-height:1.35}
+.featured-video .info .meta{font-size:12px;color:var(--muted)}
+.chan-home-section-title{font-size:14px;font-weight:700;margin:16px 0 10px;color:var(--text)}
+
+.grid{display:flex;flex-direction:column;gap:14px;padding:10px 12px}
+.card{cursor:pointer;padding:0 0 4px}
+.thumb{width:100%;aspect-ratio:16/9;max-height:60vh;overflow:hidden;background:#000;position:relative;border-radius:10px}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:38px;color:rgba(255,255,255,.5)}
+.dur-badge{position:absolute;right:6px;bottom:6px;background:rgba(0,0,0,.8);color:#fff;font-size:10px;font-weight:600;padding:2px 4px;border-radius:3px}
+.card-info{padding:8px 4px 0;display:flex;gap:10px}
+.card-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#ff0033,#ff8a00);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;overflow:hidden;color:#fff;font-weight:700}
+.card-avatar img{width:100%;height:100%;object-fit:cover}
+.card-body{flex:1;min-width:0}
+.card-title{font-size:14px;font-weight:500;line-height:1.35;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-meta{font-size:11px;color:var(--muted);line-height:1.4}
+
+.compact-filters{display:flex;gap:6px;padding:10px 14px;overflow-x:auto;scrollbar-width:none}
+.compact-filters::-webkit-scrollbar{display:none}
+.filter-chip{background:var(--bg3);border:none;color:var(--text);padding:7px 12px;border-radius:16px;font-size:12px;font-weight:500;white-space:nowrap;flex-shrink:0}
+.filter-chip.active{background:var(--text);color:var(--bg)}
+.compact-grid{display:flex;flex-direction:column;gap:8px;padding:0 14px 20px}
+.compact-item{display:flex;gap:10px;cursor:pointer;padding:6px;border-radius:10px}
+.compact-item .thumb{width:140px;aspect-ratio:16/9;border-radius:8px;flex-shrink:0;position:relative;background:#000;overflow:hidden}
+.compact-item .thumb img{width:100%;height:100%;object-fit:cover}
+.compact-item .info{flex:1;min-width:0;padding-top:2px}
+.compact-item .info h3{font-size:13px;font-weight:600;line-height:1.3;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.compact-item .info .meta{font-size:11px;color:var(--muted);margin-bottom:3px}
+.compact-item .info .stats-row{font-size:11px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.compact-item .menu-btn{background:none;border:none;color:var(--muted);font-size:16px;padding:0 6px;align-self:flex-start;flex-shrink:0}
+
+/* CHANNEL HOME GRID */
+.chan-grid{display:flex;flex-direction:column;gap:14px;padding:10px 0}
+.chan-grid .card{cursor:pointer;padding:0}
+.chan-grid .thumb{width:100%;aspect-ratio:16/9;max-height:none;border-radius:10px;overflow:hidden;background:var(--bg3);position:relative}
+.chan-grid .thumb img{width:100%;height:100%;object-fit:cover}
+.chan-grid .thumb .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--muted)}
+.chan-grid .card-info{display:flex;gap:10px;padding:10px 4px 0}
+.chan-grid .card-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#ff0033,#ff8a00);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;font-weight:700;flex-shrink:0;overflow:hidden}
+.chan-grid .card-body{flex:1;min-width:0}
+.chan-grid .card-title{font-size:14px;font-weight:500;line-height:1.35;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.chan-grid .card-meta{font-size:11px;color:var(--muted)}
+
+/* STUDIO */
+.studio-wrap{display:flex;width:100%;padding:14px;gap:20px}
+.studio-side{width:200px;flex-shrink:0;display:none}
+.studio-brand{padding:10px 12px;margin-bottom:12px;font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px}
+.studio-brand .dot{width:24px;height:16px;background:var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;flex-shrink:0}
+.studio-main{flex:1;min-width:0}
+.studio-side button{display:flex;align-items:center;gap:12px;width:100%;background:none;border:none;color:var(--text);padding:10px 12px;border-radius:10px;font-size:13px;font-weight:500;text-align:left;cursor:pointer;margin-bottom:2px}
+.studio-side button:hover{background:var(--bg2)}
+.studio-side button.active{background:var(--bg3);font-weight:600}
+.studio-side button .ic{font-size:17px;width:22px;text-align:center;flex-shrink:0}
+.studio-side .divider{height:1px;background:var(--border);margin:8px 4px}
+.studio h1{font-size:18px;margin-bottom:4px}
+.studio .sub{color:var(--muted);font-size:11px;margin-bottom:16px}
+.studio-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+.studio-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:12px}
+.studio-card .label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;font-weight:600}
+.studio-card .value{font-size:20px;font-weight:700;line-height:1.1}
+.studio-card .delta{font-size:10px;color:#4caf50;margin-top:3px}
+.chart-box{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:12px}
+.chart-box h3{font-size:13px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.chart-box h3 span{font-size:10px;color:var(--muted);font-weight:normal}
+.chart{display:flex;align-items:flex-end;gap:6px;height:90px}
+.chart .bar{flex:1;background:linear-gradient(180deg,var(--accent),rgba(255,0,51,.3));border-radius:4px 4px 2px 2px;min-height:4px}
+.chart-labels{display:flex;gap:6px;margin-top:6px}
+.chart-labels div{flex:1;text-align:center;font-size:9px;color:var(--muted)}
+.empty-chart{text-align:center;color:var(--muted);font-size:12px;padding:26px 0}
+.week-summary{background:linear-gradient(135deg,rgba(255,0,51,.15),rgba(255,138,0,.15));border:1px solid rgba(255,0,51,.4);border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px}
+.week-summary b{font-size:13px}
+.week-summary .emoji{font-size:28px;flex-shrink:0}
+.studio-section{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:12px}
+.studio-section h4{font-size:13px;margin-bottom:10px;font-weight:600}
+.content-table{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.content-row{display:flex;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border);align-items:center}
+.content-row:last-child{border-bottom:none}
+.content-row .check{width:18px;height:18px;flex-shrink:0;accent-color:var(--accent)}
+.content-row .thumb{width:80px;aspect-ratio:16/9;border-radius:6px;overflow:hidden;background:var(--bg3);flex-shrink:0;cursor:pointer}
+.content-row .thumb img{width:100%;height:100%;object-fit:cover}
+.content-row .body{flex:1;min-width:0;cursor:pointer}
+.content-row .body b{display:block;font-size:13px;line-height:1.3;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.content-row .body .meta{font-size:11px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
+.content-row .menu-btn{background:none;border:none;color:var(--muted);font-size:16px;padding:4px 8px;cursor:pointer;flex-shrink:0}
+.content-filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.content-filters input{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:9px 14px;color:var(--text);font-size:13px;outline:none;flex:1;min-width:180px}
+
+.community{padding:14px;width:100%}
+.post-box{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:14px}
+.post-box textarea{width:100%;background:transparent;border:none;color:var(--text);font-size:14px;resize:vertical;min-height:55px;outline:none;line-height:1.5}
+.post-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px;flex-wrap:wrap}
+.post-row input[type=file]{font-size:11px;color:var(--muted);max-width:160px}
+.post{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px;position:relative}
+.post-head{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.post-head .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#ff0033,#ff8a00);display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;font-weight:700;flex-shrink:0;overflow:hidden}
+.post-head .avatar img{width:100%;height:100%;object-fit:cover}
+.post-head .name{font-size:13px;font-weight:600}
+.post-head .time{font-size:11px;color:var(--muted);margin-top:2px}
+.post-menu-btn{margin-left:auto;background:none;border:none;color:var(--muted);font-size:17px;padding:2px 6px;border-radius:6px}
+.post-text{font-size:13px;line-height:1.5;margin-bottom:8px;white-space:pre-wrap;word-break:break-word}
+.post-img{width:100%;border-radius:8px;margin-bottom:10px;background:var(--bg3)}
+.post-actions{display:flex;gap:12px;align-items:center;padding-top:8px;border-top:1px solid var(--border);flex-wrap:wrap}
+.post-actions button{background:none;border:none;color:var(--muted);font-size:12px;display:inline-flex;align-items:center;gap:4px;padding:4px 6px;border-radius:6px}
+.post-actions button.liked{color:var(--accent)}
+.post-actions button.disliked{color:#f44336}
+.post-actions .spacer{flex:1}
+.post-menu-popup{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:6px 0;box-shadow:0 4px 20px rgba(0,0,0,.5);position:fixed;z-index:3000;min-width:180px}
+.post-menu-popup button{display:flex;gap:10px;width:100%;background:none;border:none;padding:10px 14px;font-size:13px;text-align:left;color:var(--text)}
+.post-menu-popup button:hover{background:var(--hover)}
+.post-reply{background:var(--bg2);border-radius:8px;padding:8px;margin-top:8px;display:flex;gap:8px;align-items:flex-start}
+.post-reply .avatar{width:26px;height:26px;font-size:11px;border-radius:50%;background:linear-gradient(135deg,#ff0033,#ff8a00);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;flex-shrink:0;overflow:hidden}
+.post-reply .body{font-size:12px;flex:1;min-width:0}
+.post-reply .body b{font-size:12px;display:block;margin-bottom:2px}
+.post-reply .body .time{font-size:11px;color:var(--muted);margin-left:6px;font-weight:normal}
+.post-reply-input{display:flex;gap:8px;margin-top:8px;align-items:center}
+.post-reply-input input{flex:1;background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);padding:6px 2px;outline:none;font-size:12px}
+
+.watch{padding:0 0 20px;width:100%}
+.watch h1{font-size:16px;line-height:1.35;margin:12px 14px 8px;font-weight:600;word-break:break-word}
+.player-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden;user-select:none}
+.player-wrap video{width:100%;height:100%;display:block;background:#000}
+.bottom-controls{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.85));padding:28px 10px 8px;opacity:0;transition:opacity .2s;pointer-events:none}
+.player-wrap.show-controls .bottom-controls{opacity:1;pointer-events:auto}
+.progress{height:3px;background:rgba(255,255,255,.28);border-radius:3px;cursor:pointer;position:relative;margin-bottom:8px}
+.progress .buffered{position:absolute;left:0;top:0;bottom:0;background:rgba(255,255,255,.4);border-radius:3px}
+.progress .played{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:3px}
+.ctrl-row{display:flex;align-items:center;gap:2px;color:#fff}
+.ctrl-row button{background:none;border:none;color:#fff;font-size:14px;padding:4px;border-radius:6px;min-width:32px;height:32px}
+.ctrl-row .time{font-size:11px;color:#e5e5e5;margin-left:6px;white-space:nowrap}
+.ctrl-row .spacer{flex:1}
+.action-row{display:flex;gap:6px;overflow-x:auto;padding:0 14px 8px;scrollbar-width:none}
+.action-row::-webkit-scrollbar{display:none}
+.chip{background:var(--bg3);border:none;padding:9px 14px;border-radius:20px;font-size:12px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;flex-shrink:0;min-height:38px;transition:.15s}
+.chip.liked{color:#4caf50;background:rgba(76,175,80,.15);border:1px solid rgba(76,175,80,.4)}
+.chip.disliked{color:#f44336;background:rgba(244,67,54,.15);border:1px solid rgba(244,67,54,.4)}
+.comments{padding:0 14px}
+.comment{display:flex;gap:10px;margin-bottom:16px;position:relative}
+.comment .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#ff0033,#ff8a00);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;font-weight:700;flex-shrink:0;overflow:hidden}
+.comment .body{flex:1;min-width:0}
+.comment .head{font-size:11px;margin-bottom:3px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.comment .head b{font-size:12px;font-weight:600}
+.comment .head .author-badge{background:var(--accent);color:#fff;font-size:9px;padding:1px 5px;border-radius:7px;font-weight:700}
+.comment .head span{color:var(--muted)}
+.comment p{font-size:13px;line-height:1.45;word-break:break-word;white-space:pre-wrap}
+.comment.pinned{background:var(--bg2);border-radius:10px;padding:8px;margin-left:-8px;margin-right:-8px}
+.comment .heart{color:var(--accent);font-size:12px;margin-left:4px}
+.comment-actions{display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap}
+.comment-actions button{background:none;border:none;color:var(--muted);font-size:11px;display:inline-flex;align-items:center;gap:3px;padding:5px 7px;border-radius:6px;min-height:28px}
+.comment-actions button.liked{color:#4caf50}
+.comment-actions button.disliked{color:#f44336}
+.comment-actions button.hearted{color:var(--accent)}
+.comment-actions .menu-btn{margin-left:auto;font-size:14px;padding:3px 6px}
+.comment-menu{position:fixed;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:6px 0;box-shadow:0 4px 20px rgba(0,0,0,.5);z-index:3000;min-width:190px}
+.comment-menu button{display:flex;align-items:center;gap:8px;width:100%;background:none;border:none;color:var(--text);padding:10px 14px;font-size:13px;text-align:left}
+.comment-menu button:hover{background:var(--hover)}
+.reply-box{display:flex;gap:8px;margin-top:8px;align-items:flex-start}
+.reply-box input{flex:1;background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);padding:6px 2px;outline:none;font-size:12px}
+.reply-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:5px}
+.reply-actions button{background:none;border:none;color:var(--muted);padding:5px 10px;font-size:11px;border-radius:14px}
+.reply-actions .send{background:var(--accent);color:#fff}
+.replies{margin-top:10px;padding-left:18px;border-left:2px solid var(--border)}
+.replies .comment{margin-bottom:12px}
+
+.page{padding:18px 14px 40px;max-width:600px;margin:0 auto;width:100%}
+.page h1{font-size:19px;margin-bottom:5px}
+.page .sub{color:var(--muted);font-size:12px;margin-bottom:18px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.field input[type=text],.field input[type=email],.field input[type=password],.field textarea,.field input[type=file],.field select{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:11px 12px;color:var(--text);font-size:13px;outline:none;min-height:42px}
+.field textarea{resize:vertical;min-height:90px;font-family:inherit}
+.submit{background:var(--accent);color:#fff;border:none;padding:11px 22px;border-radius:22px;font-size:14px;font-weight:600;min-height:42px}
+.error-msg{background:rgba(255,0,51,.15);border:1px solid rgba(255,0,51,.4);color:#ff8888;padding:9px 11px;border-radius:8px;font-size:12px;margin-bottom:10px}
+.switch-line{font-size:12px;color:var(--muted);margin-top:12px;text-align:center}
+.switch-line a{color:var(--hashtag);cursor:pointer}
+
+.modal-bg{position:fixed;inset:0;background:var(--overlay);display:flex;align-items:flex-end;justify-content:center;z-index:1000;padding-top:40px}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:18px 18px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom));width:100%;max-width:600px;max-height:88vh;overflow-y:auto;color:var(--text)}
+.modal h2{font-size:17px;margin-bottom:14px;font-weight:700}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;position:sticky;bottom:0;background:var(--bg2);padding-top:10px;margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}
+
+.settings{padding:14px;max-width:600px;margin:0 auto;width:100%}
+.settings h1{font-size:18px;margin-bottom:5px}
+.settings .sub{color:var(--muted);font-size:12px;margin-bottom:18px}
+.settings-block{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px}
+.settings-row{display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid var(--border);cursor:pointer;gap:10px}
+.settings-row:last-child{border-bottom:none}
+.settings-row .left b{font-size:13px;display:block;margin-bottom:2px}
+.settings-row .left .hint{font-size:11px;color:var(--muted)}
+.radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;position:relative}
+.radio.on{border-color:var(--accent);background:var(--accent)}
+.radio.on::after{content:'';position:absolute;inset:4px;background:#fff;border-radius:50%}
+.settings-block-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700;padding:6px 12px 5px}
+
+.notif-menu{position:fixed;top:56px;right:6px;width:calc(100vw - 12px);max-width:380px;max-height:70vh;overflow-y:auto;background:var(--bg2);border:1px solid var(--border);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.6);z-index:500;display:none}
+.notif-menu.open{display:block}
+.notif-header{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:1}
+.notif-header b{font-size:14px}
+.notif-header button{background:none;border:none;color:var(--muted);font-size:11px;padding:4px 6px}
+.notif-item{display:flex;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);position:relative;cursor:pointer}
+.notif-item.unread{background:rgba(255,0,51,.06)}
+.notif-item.unread::before{content:'';position:absolute;left:5px;top:50%;transform:translateY(-50%);width:5px;height:5px;background:var(--accent);border-radius:50%}
+.notif-ico{font-size:20px;flex-shrink:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border-radius:50%}
+.notif-body{flex:1;min-width:0}
+.notif-body b{font-size:12px;display:block;margin-bottom:2px;text-transform:capitalize}
+.notif-body p{font-size:12px;color:var(--muted);line-height:1.4;word-break:break-word}
+.notif-body .time{font-size:10px;color:var(--muted);margin-top:3px;opacity:.7}
+.notif-empty{text-align:center;padding:36px 18px;color:var(--muted);font-size:13px}
+
+.profile-menu{position:fixed;top:56px;right:8px;width:290px;max-width:calc(100vw - 16px);background:var(--bg2);border:1px solid var(--border);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.6);z-index:500;display:none;overflow:hidden}
+.profile-menu.open{display:block}
+.profile-header{padding:14px;display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--border)}
+.profile-header .avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#ff0033,#ff8a00);display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;font-weight:700;flex-shrink:0;overflow:hidden}
+.profile-header .avatar img{width:100%;height:100%;object-fit:cover}
+.profile-header .info{min-width:0;flex:1}
+.profile-header b{font-size:14px;display:block;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.profile-header span{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.profile-item{display:flex;gap:12px;align-items:center;padding:11px 14px;cursor:pointer;font-size:13px;width:100%;background:none;border:none;color:var(--text);text-align:left}
+.profile-item:hover{background:var(--hover)}
+.profile-item .ic{font-size:17px;width:22px;text-align:center;flex-shrink:0}
+.profile-item .arrow{margin-left:auto;color:var(--muted);font-size:12px}
+.profile-item.danger{color:#ff8888}
+.profile-divider{height:1px;background:var(--border);margin:4px 0}
+
+.empty{text-align:center;padding:50px 18px;color:var(--muted)}
+.empty h2{color:var(--text);margin-bottom:10px;font-size:18px}
+.empty p{margin-bottom:18px;line-height:1.5;font-size:13px}
+.toast{position:fixed;left:50%;bottom:70px;transform:translateX(-50%);background:#333;color:#fff;padding:10px 16px;border-radius:22px;font-size:13px;z-index:2000;opacity:0;transition:opacity .2s;max-width:85%;pointer-events:none;text-align:center}
+.toast.show{opacity:1}
+
+@media (min-width:900px){
+  :root{--header-h:64px}
+  body{display:grid;grid-template-columns:var(--sidebar-w) 1fr;grid-template-rows:auto 1fr;grid-template-areas:"sidebar header" "sidebar main"}
+  header{grid-area:header;padding:10px 22px;gap:14px}
+  .logo{font-size:18px}
+  .search{display:flex}
+  .top-search-btn{display:none}
+  .bottom-nav{display:none}
+  #authArea{margin-left:0}
+  .sidebar{grid-area:sidebar;display:flex;flex-direction:column;gap:2px;background:var(--bg);border-right:1px solid var(--border);padding:14px 10px;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .sidebar .brand-block{padding:10px 12px;margin-bottom:8px;font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;cursor:pointer}
+  .sidebar .brand-block .dot{width:26px;height:18px;background:var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff}
+  .sidebar button{display:flex;align-items:center;gap:14px;background:none;border:none;padding:11px 14px;border-radius:10px;font-size:14px;text-align:left;width:100%;font-weight:500;color:var(--text)}
+  .sidebar button:hover{background:var(--bg2)}
+  .sidebar button.active{background:var(--bg3);font-weight:600}
+  .sidebar .ic{font-size:19px;width:24px;text-align:center}
+  .sidebar .divider{height:1px;background:var(--border);margin:10px 4px}
+  main{grid-area:main;padding-bottom:40px;overflow-x:hidden}
+  .chan-header{padding:0 30px;margin-top:-44px}
+  .chan-avatar{width:110px;height:110px;font-size:48px;border-width:4px}
+  .banner{height:160px}
+  .chan-home,.community,.settings,.about-section{padding:20px 30px;max-width:1000px;margin:0 auto}
+  .studio-side{display:block}
+  .studio-wrap{padding:20px 24px;width:100%;max-width:none}
+  .studio-stats{grid-template-columns:repeat(4,1fr);gap:12px}
+  .modal-bg{align-items:center;padding:20px;padding-top:20px}
+  .modal{border-radius:16px;padding:24px;max-width:520px}
+  .watch{max-width:1100px;margin:0 auto;padding:20px}
+  .player-wrap{border-radius:var(--radius)}
+  .comments{padding:0}
+  .notif-menu{right:22px;top:66px;width:380px}
+  .profile-menu{right:22px;top:66px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px 14px;padding:20px 24px}
+  .grid .thumb{border-radius:var(--radius)}
+  .grid .card-info{padding:8px 0 0}
+  .compact-grid{padding:0 30px 30px}
+  .compact-item .thumb{width:180px}
+  .chan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px 14px}
+  .chan-grid .thumb{border-radius:var(--radius)}
+  .chan-grid .card-info{padding:10px 0 0}
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="brand-block" onclick="location.hash='#/'"><div class="dot">▶</div> VidTube</div>
+  <button data-side="/" onclick="location.hash='#/'"><span class="ic">🏠</span>Главная</button>
+  <button data-side="/subs" onclick="location.hash='#/subs'"><span class="ic">📺</span>Подписки</button>
+  <button data-side="/channel" onclick="location.hash='#/channel'"><span class="ic">👤</span>Мой канал</button>
+  <button data-side="/create" onclick="location.hash='#/create'"><span class="ic">＋</span>Создать</button>
+  <div class="divider"></div>
+  <button data-side="/studio" onclick="location.hash='#/studio/home'"><span class="ic">📊</span>Студия</button>
+  <button data-side="/settings" onclick="location.hash='#/settings'"><span class="ic">⚙</span>Настройки</button>
+</aside>
+
+<header>
+  <div class="logo" onclick="location.hash='#/'"><div class="dot">▶</div><span>VidTube</span><span class="ver">0.1.6.1α</span></div>
+  <div class="search"><input id="searchInput" placeholder="Поиск..."><button onclick="doSearch()">🔍</button></div>
+  <button class="icon-circle top-search-btn" onclick="toggleMobileSearch()">🔍</button>
+  <button class="icon-circle" id="bellBtn" onclick="toggleNotifMenu()">🔔<span class="bell-badge" id="bellBadge" style="display:none">0</span></button>
+  <button class="icon-circle" onclick="location.hash='#/studio/home'" title="Студия">📊</button>
+  <button class="icon-circle" onclick="location.hash='#/settings'" title="Настройки">⚙</button>
+  <div id="authArea"></div>
+</header>
+
+<main id="app"></main>
+
+<nav class="bottom-nav">
+  <button data-bnav="/" onclick="location.hash='#/'"><span class="ic">🏠</span>Главная</button>
+  <button data-bnav="/subs" onclick="location.hash='#/subs'"><span class="ic">📺</span>Подписки</button>
+  <button data-bnav="/create" onclick="location.hash='#/create'"><span class="plus">＋</span></button>
+  <button data-bnav="/studio" onclick="location.hash='#/studio/home'"><span class="ic">📊</span>Студия</button>
+  <button id="bnavAuth" onclick="handleBottomAuth()"><span class="ic" id="bnavAuthIcon">👤</span><span id="bnavAuthLabel">Войти</span></button>
+</nav>
+
+<div class="notif-menu" id="notifMenu"></div>
+<div class="profile-menu" id="profileMenu"></div>
+<div id="modalRoot"></div>
+<div id="toast" class="toast"></div><script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDJdtJtb82paBmvZs-hiWl2iZBD7crbbug",
+  authDomain: "vidtube-b2aa2.firebaseapp.com",
+  projectId: "vidtube-b2aa2",
+  storageBucket: "vidtube-b2aa2.firebasestorage.app",
+  messagingSenderId: "1000486083942",
+  appId: "1:1000486083942:web:b831be40143aa868a5fca7"
+};
+const fbApp = initializeApp(firebaseConfig);
+const auth = getAuth(fbApp);
+const BRAND = { name:'VidTube', version:'0.1.6.1α' };
+let currentFBUser = null;
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>Array.from(r.querySelectorAll(s));
+const on = (el,ev,fn)=>el&&el.addEventListener(ev,fn);
+const fmtNum = n=>{n=n||0;if(n>=1e6)return (n/1e6).toFixed(1)+' млн';if(n>=1e3)return (n/1e3).toFixed(1)+' тыс.';return String(Math.round(n));};
+const timeAgo = ts => {const d=Date.now()-ts,m=Math.floor(d/60000);if(m<1)return'только что';if(m<60)return m+' мин. назад';const h=Math.floor(m/60);if(h<24)return h+' ч. назад';const dd=Math.floor(h/24);if(dd<30)return dd+' дн. назад';return new Date(ts).toLocaleDateString('ru-RU');};
+const fmtDate = ts => new Date(ts).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+const plural = (n,o,f,m)=>{const a=n%10,b=n%100;if(a===1&&b!==11)return o;if(a>=2&&a<=4&&(b<10||b>=20))return f;return m;};
+const readAsDataURL = f => new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(f);});
+const fmtTime = s => {if(!isFinite(s)||s<0)s=0;s=Math.floor(s);const sec=s%60,m=Math.floor(s/60)%60,h=Math.floor(s/3600);return(h?h+':'+String(m).padStart(2,'0'):m)+':'+String(sec).padStart(2,'0');};
+function toast(msg, ms=2200){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),ms);}
+window.toast = toast;
+
+function renderHashtags(text){
+  return esc(text).replace(/(^|\s)(#[\p{L}\p{N}_]{2,30})/gu,(m,space,tag)=>{
+    const clean = tag.slice(1).toLowerCase();
+    return `${space}<span class="hashtag" data-hashtag="${clean}">${tag}</span>`;
+  });
+}
+function attachHashtagHandlers(root=document){
+  $$('.hashtag',root).forEach(el=>{
+    if(el.dataset.bound)return;el.dataset.bound='1';
+    el.onclick=e=>{e.stopPropagation();searchQuery=el.dataset.hashtag;location.hash='#/';render();};
+  });
+}
+
+let db=null;
+function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open('vidtube_db_v5',1);r.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('videos'))d.createObjectStore('videos',{keyPath:'id'});if(!d.objectStoreNames.contains('posts'))d.createObjectStore('posts',{keyPath:'id'});};r.onsuccess=e=>{db=e.target.result;res(db);};r.onerror=e=>rej(e.target.error);});}
+const st=(n,m)=>db.transaction(n,m).objectStore(n);
+const dbPut=(n,v)=>new Promise((res,rej)=>{const r=st(n,'readwrite').put(v);r.onsuccess=()=>res();r.onerror=()=>rej(r.error);});
+const dbGet=(n,id)=>new Promise((res,rej)=>{const r=st(n,'readonly').get(id);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});
+const dbGetAll=n=>new Promise((res,rej)=>{const r=st(n,'readonly').getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});
+const dbDel=(n,id)=>new Promise((res,rej)=>{const r=st(n,'readwrite').delete(id);r.onsuccess=()=>res();r.onerror=()=>rej(r.error);});
+let objectUrls=[];
+function makeUrl(b){const u=URL.createObjectURL(b);objectUrls.push(u);return u;}
+function clearUrls(){objectUrls.forEach(u=>URL.revokeObjectURL(u));objectUrls=[];}
+
+function applyTheme(theme){document.documentElement.setAttribute('data-theme',theme==='light'?'light':'dark');}
+function getTheme(){return localStorage.getItem('vidtube_theme')||'dark';}
+function setTheme(t){localStorage.setItem('vidtube_theme',t);applyTheme(t);if(location.hash==='#/settings')render();}
+window.setTheme = setTheme;
+applyTheme(getTheme());
+
+function getCurrentUser(){if(!currentFBUser)return null;const name=currentFBUser.displayName||localStorage.getItem('vidtube_name_'+currentFBUser.uid)||currentFBUser.email.split('@')[0];return{email:currentFBUser.email,uid:currentFBUser.uid,name,emailVerified:currentFBUser.emailVerified};}
+function handleBottomAuth(){const u=getCurrentUser();if(u)location.hash='#/channel';else openAuthModal('login');}
+window.handleBottomAuth = handleBottomAuth;
+function logout(){signOut(auth).then(()=>toast('Вы вышли'));}
+window.logout = logout;
+
+const DEFAULT_CHANNEL={name:'',handle:'',desc:'',avatar:{type:'emoji',value:'🎬'},banner:{type:'gradient',value:'linear-gradient(120deg,#ff0033,#ff8a00,#7a00ff)'},subscribers:0,createdAt:null,trailerId:null,featuredId:null};
+function makeHandle(name){return '@'+String(name||'user').toLowerCase().replace(/[^a-zа-яё0-9]/g,'').slice(0,15);}
+function getChannelConfig(){
+  try{
+    const raw=localStorage.getItem('vidtube_channel_'+(currentFBUser?.uid||'guest'));
+    if(!raw)return JSON.parse(JSON.stringify(DEFAULT_CHANNEL));
+    const c=JSON.parse(raw);
+    return{...DEFAULT_CHANNEL,...c,avatar:{...DEFAULT_CHANNEL.avatar,...(c.avatar||{})},banner:{...DEFAULT_CHANNEL.banner,...(c.banner||{})}};
+  }catch{return JSON.parse(JSON.stringify(DEFAULT_CHANNEL));}
+}
+function setChannelConfig(c){localStorage.setItem('vidtube_channel_'+(currentFBUser?.uid||'guest'),JSON.stringify(c));}
+function avatarHTML(){const c=getChannelConfig();if(c.avatar.type==='image'&&c.avatar.value)return`<img src="${c.avatar.value}">`;return esc(c.avatar.value||'🎬');}
+function bannerStyle(){const c=getChannelConfig();if(c.banner.type==='image'&&c.banner.value)return`background-image:url('${c.banner.value}');background-size:cover;background-position:center`;return`background:${c.banner.value||DEFAULT_CHANNEL.banner.value}`;}
+
+function getNotifs(){try{return JSON.parse(localStorage.getItem('vidtube_notifs')||'[]');}catch{return[];}}
+function saveNotifs(arr){localStorage.setItem('vidtube_notifs',JSON.stringify(arr.slice(0,100)));}
+function addNotif(type,text,extra){
+  const icons={video:'📹',like:'👍',comment:'💬',subscribe:'👤'};
+  const n=getNotifs();
+  n.unshift({id:'n'+Date.now()+Math.random().toString(36).slice(2,6),type,icon:icons[type]||'🔔',text,extra:extra||null,date:Date.now(),read:false});
+  saveNotifs(n);updateBellBadge();
+}
+function unreadCount(){return getNotifs().filter(n=>!n.read).length;}
+function updateBellBadge(){const b=document.getElementById('bellBadge');const btn=document.getElementById('bellBtn');if(!b||!btn)return;const n=unreadCount();if(n>0){b.textContent=n>9?'9+':n;b.style.display='flex';btn.classList.add('has-unread');}else{b.style.display='none';btn.classList.remove('has-unread');}}
+window.updateBellBadge = updateBellBadge;
+function toggleNotifMenu(){const m=document.getElementById('notifMenu');if(m.classList.contains('open')){m.classList.remove('open');return;}renderNotifMenu();m.classList.add('open');}
+window.toggleNotifMenu = toggleNotifMenu;
+function renderNotifMenu(){
+  const menu=document.getElementById('notifMenu');const notifs=getNotifs();
+  let html=`<div class="notif-header"><b>Уведомления</b>${notifs.some(n=>!n.read)?'<button onclick="markAllRead()">Прочитать все</button>':''}</div>`;
+  if(!notifs.length)html+='<div class="notif-empty">🔔<br><br>Пока нет уведомлений</div>';
+  else html+=notifs.map(n=>`<div class="notif-item ${n.read?'':'unread'}" data-nid="${n.id}"><div class="notif-ico">${n.icon}</div><div class="notif-body"><b>${esc(n.type)}</b><p>${esc(n.text)}</p><div class="time">${timeAgo(n.date)}</div></div></div>`).join('');
+  menu.innerHTML=html;
+  $$('[data-nid]',menu).forEach(el=>el.onclick=()=>{const notifs=getNotifs();const n=notifs.find(x=>x.id===el.dataset.nid);if(n){n.read=true;saveNotifs(notifs);updateBellBadge();el.classList.remove('unread');}if(n&&n.extra&&n.extra.videoId){location.hash='#/watch/'+n.extra.videoId;menu.classList.remove('open');}});
+}
+function markAllRead(){const n=getNotifs();n.forEach(x=>x.read=true);saveNotifs(n);updateBellBadge();renderNotifMenu();}
+window.markAllRead = markAllRead;
+document.addEventListener('click',e=>{
+  const m=document.getElementById('notifMenu');const b=document.getElementById('bellBtn');
+  if(m&&m.classList.contains('open')&&!m.contains(e.target)&&e.target!==b&&!b.contains(e.target))m.classList.remove('open');
+});
+
+function toggleProfileMenu(){
+  const m=document.getElementById('profileMenu');
+  if(!m)return;
+  if(m.classList.contains('open')){m.classList.remove('open');return;}
+  renderProfileMenu();
+  m.classList.add('open');
+}
+function renderProfileMenu(){
+  const m=document.getElementById('profileMenu');
+  const u=getCurrentUser();if(!u)return;
+  const cfg=getChannelConfig();
+  const displayName=(cfg.name||u.name).trim();
+  const t=getTheme();
+  const themeLabel = t==='light'?'Светлая':'Тёмная';
+  m.innerHTML=`
+    <div class="profile-header">
+      <div class="avatar">${avatarHTML()}</div>
+      <div class="info">
+        <b>${esc(displayName)}</b>
+        <span>${esc(cfg.handle||'@user')}</span>
+      </div>
+    </div>
+    <button class="profile-item" onclick="closeProfileMenu();location.hash='#/channel/home'"><span class="ic">👤</span>Мой канал</button>
+    <button class="profile-item" onclick="closeProfileMenu();location.hash='#/studio/home'"><span class="ic">📊</span>Творческая студия</button>
+    <div class="profile-divider"></div>
+    <button class="profile-item" onclick="cycleTheme()"><span class="ic">${t==='light'?'☀️':'🌙'}</span>Тема: ${themeLabel}<span class="arrow">›</span></button>
+    <button class="profile-item" onclick="closeProfileMenu();location.hash='#/settings'"><span class="ic">⚙</span>Настройки<span class="arrow">›</span></button>
+    <div class="profile-divider"></div>
+    <button class="profile-item danger" onclick="closeProfileMenu();logout()"><span class="ic">↪</span>Выйти</button>
+  `;
+}
+function closeProfileMenu(){const m=document.getElementById('profileMenu');if(m)m.classList.remove('open');}
+function cycleTheme(){const t=getTheme();setTheme(t==='light'?'dark':'light');renderProfileMenu();}
+window.toggleProfileMenu=toggleProfileMenu;
+window.closeProfileMenu=closeProfileMenu;
+window.cycleTheme=cycleTheme;
+document.addEventListener('click',e=>{
+  const m=document.getElementById('profileMenu');
+  if(m&&m.classList.contains('open')&&!m.contains(e.target)&&!e.target.closest('.user-chip'))m.classList.remove('open');
+});
+
+function openModal(html){const root=document.getElementById('modalRoot');root.innerHTML=`<div class="modal-bg"><div class="modal">${html}</div></div>`;const bg=$('.modal-bg',root);on(bg,'mousedown',e=>{if(e.target===bg)closeModal();});}
+function closeModal(){document.getElementById('modalRoot').innerHTML='';}
+window.closeModal = closeModal;
+
+function renderAuthArea(){
+  const area=document.getElementById('authArea');const u=getCurrentUser();
+  if(u){
+    const cfg=getChannelConfig();
+    const displayName=(cfg.name||u.name||u.email.split('@')[0]).trim();
+    const initial=displayName[0].toUpperCase();
+    area.innerHTML=`<div class="user-chip" onclick="event.stopPropagation();toggleProfileMenu()"><div class="mini-avatar">${esc(initial)}</div><span>${esc(displayName)}</span></div>`;
+    const ico=document.getElementById('bnavAuthIcon');const lbl=document.getElementById('bnavAuthLabel');
+    if(ico)ico.textContent=initial;if(lbl)lbl.textContent='Профиль';
+  }else{
+    area.innerHTML=`<button class="auth-btn" onclick="openAuthModal('login')">Войти</button><button class="auth-btn primary" onclick="openAuthModal('register')">Регистрация</button>`;
+    const ico=document.getElementById('bnavAuthIcon');const lbl=document.getElementById('bnavAuthLabel');
+    if(ico)ico.textContent='👤';if(lbl)lbl.textContent='Войти';
+  }
+  updateBellBadge();
+}
+window.renderAuthArea = renderAuthArea;
+function openAuthModal(mode='register'){return mode==='login'?openLoginModal():openRegisterModal();}
+window.openAuthModal = openAuthModal;
+
+function openRegisterModal(){
+  openModal(`<h2>Регистрация</h2><div id="regErr"></div><div class="field"><label>Название канала *</label><input type="text" id="rName" maxlength="30" placeholder="Kolya Games"></div><div class="field"><label>Email *</label><input type="email" id="rEmail" maxlength="80"></div><div class="field"><label>Пароль *</label><input type="password" id="rPass" maxlength="60"></div><div class="modal-actions"><button class="auth-btn" onclick="closeModal()">Отмена</button><button class="submit" id="rSubmit">Создать</button></div><div class="switch-line">Уже есть? <a onclick="openLoginModal()">Войти</a></div>`);
+  setTimeout(()=>$('#rName')?.focus(),50);
+  $('#rSubmit').onclick = async () => {
+    const name=$('#rName').value.trim(),email=$('#rEmail').value.trim(),pass=$('#rPass').value;
+    if(name.length<2){$('#regErr').innerHTML='<div class="error-msg">Название: минимум 2 символа</div>';return;}
+    if(!email.includes('@')){$('#regErr').innerHTML='<div class="error-msg">Правильный email</div>';return;}
+    if(pass.length<6){$('#regErr').innerHTML='<div class="error-msg">Пароль: мин. 6 символов</div>';return;}
+    const btn=$('#rSubmit');btn.disabled=true;btn.textContent='Создаём...';
+    try{
+      const cred=await createUserWithEmailAndPassword(auth,email,pass);
+      await updateProfile(cred.user,{displayName:name});
+      localStorage.setItem('vidtube_name_'+cred.user.uid,name);
+      await sendEmailVerification(cred.user);
+      setChannelConfig({...DEFAULT_CHANNEL,name,handle:makeHandle(name),createdAt:Date.now()});
+      closeModal();
+      openModal(`<span style="font-size:44px;text-align:center;display:block;margin-bottom:12px">📧</span><div style="font-size:18px;font-weight:700;text-align:center;margin-bottom:8px">Письмо отправлено!</div><div style="font-size:13px;color:var(--muted);line-height:1.5;text-align:center;margin-bottom:18px">Мы отправили письмо на<br><b style="color:var(--text)">${esc(email)}</b><br><br>Проверьте Входящие и Спам.</div><button class="submit" style="width:100%" onclick="closeModal()">Понятно</button>`);
+    }catch(err){
+      let msg=err.message;
+      if(err.code==='auth/email-already-in-use')msg='Этот email уже зарегистрирован';
+      else if(err.code==='auth/invalid-email')msg='Некорректный email';
+      else if(err.code==='auth/weak-password')msg='Слабый пароль';
+      $('#regErr').innerHTML=`<div class="error-msg">${esc(msg)}</div>`;
+      btn.disabled=false;btn.textContent='Создать';
+    }
+  };
+}
+window.openRegisterModal = openRegisterModal;
+
+function openLoginModal(){
+  openModal(`<h2>Вход в VidTube</h2><div id="loginErr"></div><div class="field"><label>Email</label><input type="email" id="lEmail" maxlength="80"></div><div class="field"><label>Пароль</label><input type="password" id="lPass" maxlength="60"></div><div class="modal-actions"><button class="auth-btn" onclick="closeModal()">Отмена</button><button class="submit" id="lSubmit">Войти</button></div><div class="switch-line"><a onclick="openResetModal()">Забыли пароль?</a> · <a onclick="openRegisterModal()">Создать</a></div>`);
+  setTimeout(()=>$('#lEmail')?.focus(),50);
+  const go = async () => {
+    const email=$('#lEmail').value.trim(),pass=$('#lPass').value;
+    const btn=$('#lSubmit');btn.disabled=true;btn.textContent='Входим...';
+    try{
+      const cred=await signInWithEmailAndPassword(auth,email,pass);
+      if(!cred.user.emailVerified){await signOut(auth);$('#loginErr').innerHTML='<div class="error-msg">Email не подтверждён. Проверьте почту.</div>';btn.disabled=false;btn.textContent='Войти';return;}
+      closeModal();toast('С возвращением!');
+    }catch(err){
+      let msg=err.message;
+      if(err.code==='auth/user-not-found')msg='Пользователь не найден';
+      else if(err.code==='auth/wrong-password'||err.code==='auth/invalid-credential')msg='Неверный email или пароль';
+      $('#loginErr').innerHTML=`<div class="error-msg">${esc(msg)}</div>`;
+      btn.disabled=false;btn.textContent='Войти';
+    }
+  };
+  $('#lSubmit').onclick=go;
+  $('#lPass').onkeydown=e=>{if(e.key==='Enter')go();};
+}
+window.openLoginModal = openLoginModal;
+
+function openResetModal(){
+  openModal(`<h2>Восстановление пароля</h2><p style="font-size:12px;color:var(--muted);margin-bottom:14px">Пришлём ссылку для сброса.</p><div id="resetErr"></div><div class="field"><label>Email</label><input type="email" id="rpEmail"></div><div class="modal-actions"><button class="auth-btn" onclick="closeModal()">Отмена</button><button class="submit" id="rpSubmit">Отправить</button></div>`);
+  $('#rpSubmit').onclick=async()=>{const email=$('#rpEmail').value.trim();if(!email.includes('@')){$('#resetErr').innerHTML='<div class="error-msg">Введите email</div>';return;}try{await sendPasswordResetEmail(auth,email);closeModal();toast('Письмо отправлено');}catch(err){$('#resetErr').innerHTML=`<div class="error-msg">${esc(err.message)}</div>`;}};
+}
+window.openResetModal = openResetModal;
+
+const app=document.getElementById('app');
+async function render(){
+  clearUrls();
+  const hash=location.hash.slice(1)||'/';
+  const parts=hash.split('/').filter(Boolean);
+  const key='/'+(parts[0]||'');
+  $$('.sidebar button[data-side]').forEach(b=>b.classList.toggle('active',b.dataset.side===key));
+  let bkey=key;
+  if(key==='/settings')bkey='';
+  if(key==='/watch')bkey='';
+  $$('.bottom-nav button[data-bnav]').forEach(b=>b.classList.toggle('active',b.dataset.bnav===bkey));
+  renderAuthArea();
+  const user=getCurrentUser();
+  if(parts[0]==='settings'){renderSettings();return;}
+  if(parts[0]==='channel'){
+    if(!user){renderAuthGate('Мой канал');return;}
+    const tab=parts[1]||'home';
+    await renderChannel(tab);return;
+  }
+  if(parts[0]==='subs'){if(!user){renderAuthGate('Подписки');return;}renderSubs();return;}
+  if(parts[0]==='studio'){if(!user){renderAuthGate('Творческая студия');return;}await renderStudio(parts[1]||'home');return;}
+  if(parts[0]==='create'){if(!user){renderAuthGate('Создание видео');return;}renderCreate();return;}
+  if(parts[0]==='watch'){await renderWatch(parts[1]);return;}
+  await renderHome();
+}
+on(window,'hashchange',()=>render());
+
+function renderAuthGate(title){
+  app.innerHTML=`<div class="empty" style="padding:80px 20px"><h2>${esc(title)}</h2><p>Войдите или создайте аккаунт.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="submit" onclick="openRegisterModal()">Создать аккаунт</button><button class="auth-btn" style="padding:12px 22px;font-size:14px" onclick="openLoginModal()">Войти</button></div></div>`;
+}
+
+let searchQuery='';
+function toggleMobileSearch(){
+  const existing=$('.mobile-search-bar');
+  if(existing){existing.remove();return;}
+  const bar=document.createElement('div');
+  bar.style.cssText='padding:8px 12px;display:flex;gap:8px;background:var(--bg);border-bottom:1px solid var(--border);width:100%';
+  bar.className='mobile-search-bar';
+  bar.innerHTML=`<input type="text" id="mSearch" placeholder="Поиск..." style="flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:10px 14px;color:var(--text);outline:none;min-width:0"><button id="mSearchBtn" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);width:42px;border-radius:50%;font-size:16px;flex-shrink:0">🔍</button>`;
+  document.querySelector('header').insertAdjacentElement('afterend',bar);
+  const inp=$('#mSearch');inp.focus();
+  const submit=()=>{searchQuery=inp.value;bar.remove();if(location.hash!=='#/')location.hash='#/';else render();};
+  inp.onkeydown=e=>{if(e.key==='Enter')submit();};
+  $('#mSearchBtn').onclick=submit;
+}
+window.toggleMobileSearch = toggleMobileSearch;
+function doSearch(){searchQuery=$('#searchInput').value;if(location.hash!=='#/'&&location.hash!=='')location.hash='#/';else render();}
+window.doSearch = doSearch;
+on($('#searchInput'),'keydown',e=>{if(e.key==='Enter')doSearch();});
+
+async function renderHome(){
+  const user=getCurrentUser();
+  if(!user){app.innerHTML=`<div style="padding:50px 20px 40px;text-align:center;max-width:520px;margin:0 auto"><div style="width:60px;height:44px;background:var(--accent);border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:22px;color:#fff;margin-bottom:18px">▶</div><h1 style="font-size:22px;margin-bottom:10px">Добро пожаловать на ${BRAND.name}</h1><p style="color:var(--muted);font-size:14px;line-height:1.5;margin-bottom:24px">Загружайте видео, собирайте лайки, ведите канал.</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="submit" style="padding:13px 28px" onclick="openRegisterModal()">Создать аккаунт</button><button class="auth-btn" style="padding:13px 20px;font-size:13px" onclick="openLoginModal()">Войти</button></div></div>`;return;}
+  let videos=await dbGetAll('videos');
+  videos.sort((a,b)=>b.date-a.date);
+  if(searchQuery.trim()){const q=searchQuery.trim().toLowerCase();videos=videos.filter(v=>v.title.toLowerCase().includes(q)||(v.desc||'').toLowerCase().includes(q));}
+  if(!videos.length){app.innerHTML=`<div class="empty"><h2>${searchQuery?'Ничего не найдено':'Здесь пока пусто'}</h2><p>${searchQuery?'По запросу «'+esc(searchQuery)+'» ничего нет':'Загрузите первое видео'}</p>${searchQuery?'<button class="submit" onclick="searchQuery=\'\';render()">Сбросить поиск</button>':'<button class="submit" onclick="location.hash=\'#/create\'">＋ Создать видео</button>'}</div>`;return;}
+  const cfg=getChannelConfig();
+  app.innerHTML=`<div class="grid">`+videos.map(v=>{
+    const thumb=v.thumb?`<img src="${v.thumb}">`:`<div class="play">▶</div>`;
+    const dur=v.duration?`<span class="dur-badge">${fmtTime(v.duration)}</span>`:'';
+    return`<div class="card" onclick="location.hash='#/watch/${v.id}'"><div class="thumb">${thumb}${dur}</div><div class="card-info"><div class="card-avatar">${avatarHTML()}</div><div class="card-body"><div class="card-title">${renderHashtags(v.title)}</div><div class="card-meta">${esc(cfg.name)} · ${fmtNum(v.views)} просмотров · ${timeAgo(v.date)}</div></div></div></div>`;
+  }).join('')+`</div>`;
+  attachHashtagHandlers(app);
+}
+
+function renderSubs(){
+  app.innerHTML=`<div class="empty" style="padding:70px 20px"><h2>Подписки</h2><p>Вы пока ни на кого не подписаны.</p><p style="font-size:12px;margin-top:-8px">Когда появятся другие каналы — их новые видео появятся здесь.</p><button class="submit" onclick="location.hash='#/'">Смотреть на главной</button></div>`;
+}
+
+async function renderChannel(tab){
+  const cfg=getChannelConfig();
+  const chanName=cfg.name||'Мой канал';
+  const chanHandle=cfg.handle||makeHandle(chanName);
+  const videos=await dbGetAll('videos');
+  const posts=await dbGetAll('posts');
+  videos.sort((a,b)=>b.date-a.date);
+  posts.sort((a,b)=>b.date-a.date);
+
+  let content='';
+  if(tab==='community'){
+    content=`<div class="community">
+      <div class="post-box"><textarea id="postText" placeholder="Поделитесь чем-нибудь с подписчиками..."></textarea><div class="post-row"><input type="file" id="postImg" accept="image/*"><button class="submit" id="postBtn" style="padding:9px 18px;font-size:12px;min-height:36px">Опубликовать</button></div></div>
+      ${posts.length?posts.map(p=>renderPost(p,cfg)).join(''):'<p style="color:var(--muted);text-align:center;padding:26px;font-size:13px">Постов пока нет</p>'}
+    </div>`;
+  } else if(tab==='about'){
+    content=`<div style="padding:14px">
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px;font-size:13px;line-height:1.55"><h3 style="font-size:13px;margin-bottom:8px">📝 О канале</h3><p style="white-space:pre-wrap">${cfg.desc?renderHashtags(cfg.desc):'Описание не указано'}</p></div>
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:13px">
+        <h3 style="font-size:13px;margin-bottom:8px">ℹ Дополнительная информация</h3>
+        <div style="display:flex;align-items:center;gap:10px;padding:6px 0"><div style="width:22px;height:22px;background:var(--bg3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px">📅</div>Дата регистрации: ${cfg.createdAt?fmtDate(cfg.createdAt):'—'}</div>
+        <div style="display:flex;align-items:center;gap:10px;padding:6px 0"><div style="width:22px;height:22px;background:var(--bg3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px">👁</div>${fmtNum(videos.reduce((s,v)=>s+(v.views||0),0))} просмотров</div>
+        <div style="display:flex;align-items:center;gap:10px;padding:6px 0"><div style="width:22px;height:22px;background:var(--bg3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px">🌍</div>Россия</div>
+      </div>
+    </div>`;
+  } else if(tab==='videos'){
+    content=`<div class="compact-filters">
+        <button class="filter-chip active">Новые</button>
+        <button class="filter-chip">Для всех</button>
+        <button class="filter-chip">Ограниченный</button>
+        <button class="filter-chip">По ссылке</button>
+      </div>
+      ${videos.length?`<div class="compact-grid">`+videos.map(v=>{
+        const thumb=v.thumb?`<img src="${v.thumb}">`:'<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:var(--bg3);font-size:22px;color:var(--muted)">▶</div>';
+        const dur=v.duration?`<span class="dur-badge">${fmtTime(v.duration)}</span>`:'';
+        return`<div class="compact-item" onclick="location.hash='#/watch/${v.id}'"><div class="thumb">${thumb}${dur}</div><div class="info"><h3>${renderHashtags(v.title)}</h3><div class="meta">${fmtNum(v.views)} просмотров · ${timeAgo(v.date)}</div><div class="stats-row"><span>🌐</span><span>👍 ${fmtNum(v.likes||0)}</span><span>💬 ${(v.comments||[]).length}</span></div></div><button class="menu-btn" onclick="event.stopPropagation()">⋮</button></div>`;
+      }).join('')+`</div>`:'<div class="empty"><h2>На канале нет видео</h2><button class="submit" onclick="location.hash=\'#/create\'">＋ Создать видео</button></div>'}`;
+  } else {
+    const trailer=videos.find(v=>v.id===cfg.trailerId);
+    const featured=videos.find(v=>v.id===cfg.featuredId);
+    const isSubscribed=false;
+    const showVideo=isSubscribed?featured:trailer;
+    const showLabel=isSubscribed?'Рекомендованное':'Трейлер канала';
+
+    let homeContent='';
+    if(showVideo && showVideo.thumb){
+      homeContent+=`<div class="featured-video" onclick="location.hash='#/watch/${showVideo.id}'"><div class="thumb"><img src="${showVideo.thumb}"></div><div class="info"><span class="featured-label">${showLabel}</span><h3>${renderHashtags(showVideo.title)}</h3><div class="meta">${fmtNum(showVideo.views)} просмотров · ${timeAgo(showVideo.date)}</div></div></div>`;
+    }
+
+    if(videos.length){
+      homeContent+=`<div class="chan-home-section-title">Последние видео</div>`;
+      homeContent+=`<div class="chan-grid">`+videos.slice(0,8).map(v=>{
+        const thumb = v.thumb ? `<img src="${v.thumb}">` : `<div class="play">▶</div>`;
+        return `<div class="card" onclick="location.hash='#/watch/${v.id}'">
+          <div class="thumb">${thumb}</div>
+          <div class="card-info">
+            <div class="card-avatar">${avatarHTML()}</div>
+            <div class="card-body">
+              <div class="card-title">${renderHashtags(v.title)}</div>
+              <div class="card-meta">${fmtNum(v.views)} просмотров · ${timeAgo(v.date)}</div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')+`</div>`;
+    } else {
+      homeContent+=`<div class="empty"><h2>На канале нет видео</h2><p>Загрузите первое видео</p><button class="submit" onclick="location.hash='#/create'">＋ Создать видео</button></div>`;
+    }
+    content=`<div class="chan-home">${homeContent}</div>`;
+  }
+
+  app.innerHTML=`
+    <div class="banner" style="${bannerStyle()}"></div>
+    <div class="chan-header">
+      <div class="chan-avatar">${avatarHTML()}</div>
+      <div class="chan-info">
+        <div class="chan-name">${esc(chanName)}</div>
+        <div class="chan-stats">${esc(chanHandle)} · ${fmtNum(cfg.subscribers||0)} ${plural(cfg.subscribers||0,'подписчик','подписчика','подписчиков')} · ${videos.length} ${plural(videos.length,'видео','видео','видео')}</div>
+        <div class="chan-actions">
+          <button class="edit-btn" onclick="openExtendedSettings()">✏ Настроить канал</button>
+          <button class="edit-btn" onclick="shareChannel()">🔗 Поделиться</button>
+          <button class="edit-btn" onclick="location.hash='#/studio/home'">📊 Студия</button>
+        </div>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab ${tab==='home'?'active':''}" onclick="location.hash='#/channel/home'">Главная</button>
+      <button class="tab ${tab==='videos'?'active':''}" onclick="location.hash='#/channel/videos'">Видео</button>
+      <button class="tab ${tab==='community'?'active':''}" onclick="location.hash='#/channel/community'">Сообщество</button>
+      <button class="tab ${tab==='about'?'active':''}" onclick="location.hash='#/channel/about'">Описание</button>
+    </div>
+    ${content}`;
+
+  attachHashtagHandlers(app);
+  if(tab==='community'){
+    $('#postBtn').onclick=async()=>{
+      const text=$('#postText').value.trim();
+      if(!text){alert('Введите текст');return;}
+      const imgFile=$('#postImg').files[0];
+      const image=imgFile?await readAsDataURL(imgFile):null;
+      const post={id:'p'+Date.now(),text,image,likes:0,dislikes:0,liked:false,disliked:false,comments:[],date:Date.now()};
+      await dbPut('posts',post);render();
+    };
+    attachPostHandlers();
+  }
+}
+window.renderChannel = renderChannel;
+
+function renderPost(p,cfg){
+  const img=p.image?`<img src="${p.image}" class="post-img">`:'';
+  return`<div class="post" data-pid="${p.id}">
+    <div class="post-head"><div class="avatar">${avatarHTML()}</div><div><div class="name">${esc(cfg.name||'Мой канал')}</div><div class="time">${timeAgo(p.date)}</div></div><button class="post-menu-btn" data-pmenu="${p.id}">⋮</button></div>
+    <div class="post-text">${renderHashtags(p.text)}</div>${img}
+    <div class="post-actions"><button data-pact="plike" data-id="${p.id}" class="${p.liked?'liked':''}">👍 ${fmtNum(p.likes||0)}</button><button data-pact="pdislike" data-id="${p.id}" class="${p.disliked?'disliked':''}">👎 ${fmtNum(p.dislikes||0)}</button><button data-pact="pcomment" data-id="${p.id}">💬 ${(p.comments||[]).length}</button><span class="spacer"></span><button data-pact="pshare" data-id="${p.id}">↗</button></div>
+    <div id="pcomments-${p.id}">${(p.comments||[]).map(c=>`<div class="post-reply"><div class="avatar">${esc((c.author||'Г')[0].toUpperCase())}</div><div class="body"><b>${esc(c.author)}</b><span class="time">${timeAgo(c.date)}</span><div style="margin-top:3px">${esc(c.text)}</div></div></div>`).join('')}</div>
+    <div class="post-reply-input"><input type="text" placeholder="Написать комментарий..." data-pinput="${p.id}"><button class="submit" style="padding:5px 12px;font-size:11px;min-height:30px" data-psend="${p.id}">→</button></div>
+  </div>`;
+}
+function attachPostHandlers(){
+  $$('[data-pact]').forEach(b=>b.onclick=async()=>{
+    const act=b.dataset.pact,id=b.dataset.id;
+    const p=await dbGet('posts',id);if(!p)return;
+    if(act==='plike'){p.liked=!p.liked;p.likes=(p.likes||0)+(p.liked?1:-1);if(p.liked&&p.disliked){p.disliked=false;p.dislikes=Math.max(0,(p.dislikes||0)-1);}}
+    else if(act==='pdislike'){p.disliked=!p.disliked;p.dislikes=(p.dislikes||0)+(p.disliked?1:-1);if(p.disliked&&p.liked){p.liked=false;p.likes=Math.max(0,(p.likes||0)-1);}}
+    else if(act==='pshare'){const url=location.origin+location.pathname+'#/channel/community';if(navigator.share)navigator.share({url}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(url).then(()=>toast('Ссылка скопирована')).catch(()=>{});else prompt('Ссылка:',url);return;}
+    else if(act==='pcomment'){const inp=document.querySelector(`[data-pinput="${id}"]`);inp?.focus();return;}
+    await dbPut('posts',p);render();
+  });
+  $$('[data-psend]').forEach(b=>b.onclick=async()=>{
+    const id=b.dataset.psend;
+    const inp=document.querySelector(`[data-pinput="${id}"]`);
+    const text=inp.value.trim();if(!text)return;
+    const u=getCurrentUser();
+    const p=await dbGet('posts',id);if(!p)return;
+    p.comments=p.comments||[];
+    p.comments.push({author:u?.name||'Гость',text,date:Date.now()});
+    await dbPut('posts',p);render();
+  });
+  $$('[data-pmenu]').forEach(b=>b.onclick=async e=>{
+    e.stopPropagation();
+    document.querySelectorAll('.post-menu-popup').forEach(m=>m.remove());
+    const id=b.dataset.pmenu;
+    const p=await dbGet('posts',id);if(!p)return;
+    const rect=b.getBoundingClientRect();
+    const menu=document.createElement('div');
+    menu.className='post-menu-popup';
+    menu.style.cssText=`position:fixed;top:${Math.min(rect.bottom+4,window.innerHeight-200)}px;right:10px;`;
+    menu.innerHTML=`<button data-pedit="${id}">✏ Редактировать</button><button data-pcopylink="${id}">🔗 Копировать ссылку</button><button data-pdel="${id}" style="color:#ff8888">🗑 Удалить</button>`;
+    document.body.appendChild(menu);
+    menu.querySelector(`[data-pdel="${id}"]`).onclick=async()=>{menu.remove();if(!confirm('Удалить пост?'))return;await dbDel('posts',id);render();};
+    menu.querySelector(`[data-pcopylink="${id}"]`).onclick=()=>{menu.remove();const url=location.origin+location.pathname+'#/channel/community';if(navigator.clipboard)navigator.clipboard.writeText(url).then(()=>toast('Ссылка скопирована'));else prompt('Ссылка:',url);};
+    menu.querySelector(`[data-pedit="${id}"]`).onclick=()=>{menu.remove();openPostEdit(p);};
+    const close=ev=>{if(!menu.contains(ev.target)){menu.remove();document.removeEventListener('click',close);}};
+    setTimeout(()=>document.addEventListener('click',close),50);
+  });
+}
+function openPostEdit(p){
+  openModal(`<h2>Редактировать пост</h2><div class="field"><label>Текст</label><textarea id="peText" maxlength="2000">${esc(p.text)}</textarea></div><div class="modal-actions"><button class="auth-btn" onclick="closeModal()">Отмена</button><button class="submit" id="peSave">Сохранить</button></div>`);
+  $('#peSave').onclick=async()=>{p.text=$('#peText').value.trim()||p.text;await dbPut('posts',p);closeModal();render();toast('Пост обновлён');};
+}
+function shareChannel(){
+  const url=location.origin+location.pathname+'#/channel/home';
+  if(navigator.share)navigator.share({title:'Мой канал на VidTube',url}).catch(()=>{});
+  else if(navigator.clipboard&&location.protocol==='https:'){navigator.clipboard.writeText(url);toast('Ссылка скопирована');}
+  else{prompt('Скопируйте ссылку:',url);}
+}
+window.shareChannel = shareChannel;
+
+async function renderStudio(tab='home'){
+  const videos=await dbGetAll('videos');
+  window._studioVideos=videos;
+  const cfg=getChannelConfig();
+  videos.sort((a,b)=>b.date-a.date);
+
+  let content='';
+  if(tab==='content') content=renderStudioContent(videos,cfg);
+  else if(tab==='analytics') content=renderStudioAnalytics(videos,cfg);
+  else if(tab==='comments') content=renderStudioComments(videos,cfg);
+  else if(tab==='settings') content=`
+    <h1 style="font-size:18px;margin-bottom:14px">Настройки канала</h1>
+    <div class="studio-section">
+      <h4>⚙ Расширенные настройки канала</h4>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.4">Название, описание, аватар, баннер, трейлер и рекомендованное видео</p>
+      <button class="submit" onclick="openExtendedSettings()" style="width:100%;font-size:12px;min-height:38px">Открыть настройки</button>
+    </div>
+    <button style="background:var(--bg3);color:#ff9999;border:1px solid #4a2020;padding:11px 20px;border-radius:22px;font-size:13px;font-weight:600;width:100%;max-width:300px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer" onclick="openDeleteChannelModal()">🗑 Удалить канал</button>`;
+  else content=renderStudioHome(videos,cfg);
+
+  app.innerHTML=`
+    <div class="studio-wrap">
+      <div class="studio-side">
+        <div class="studio-brand"><div class="dot">▶</div> VidTube Studio</div>
+        <button class="${tab==='home'?'active':''}" onclick="location.hash='#/studio/home'"><span class="ic">🏠</span>Главная</button>
+        <button class="${tab==='content'?'active':''}" onclick="location.hash='#/studio/content'"><span class="ic">📺</span>Контент</button>
+        <button class="${tab==='analytics'?'active':''}" onclick="location.hash='#/studio/analytics'"><span class="ic">📊</span>Аналитика</button>
+        <button class="${tab==='comments'?'active':''}" onclick="location.hash='#/studio/comments'"><span class="ic">💬</span>Комментарии</button>
+        <div class="divider"></div>
+        <button class="${tab==='settings'?'active':''}" onclick="location.hash='#/studio/settings'"><span class="ic">⚙</span>Настройки</button>
+      </div>
+      <div class="studio-main">
+        ${content}
+      </div>
+    </div>`;
+  if(tab==='content') attachContentHandlers(videos);
+}
+window.renderStudio = renderStudio;
+
+function renderStudioHome(videos,cfg){
+  const totalViews=videos.reduce((s,v)=>s+(v.views||0),0);
+  const totalLikes=videos.reduce((s,v)=>s+(v.likes||0),0);
+  const totalComments=videos.reduce((s,v)=>s+((v.comments||[]).length),0);
+  return `
+    <h1 style="font-size:18px;margin-bottom:4px">Панель управления каналом</h1>
+    <p style="color:var(--muted);font-size:11px;margin-bottom:16px">${BRAND.version} · Firebase Auth ✅</p>
+    <div class="studio-stats">
+      <div class="studio-card"><div class="label">Подписчики</div><div class="value">${fmtNum(cfg.subscribers||0)}</div><div class="delta">на канале</div></div>
+      <div class="studio-card"><div class="label">Просмотры</div><div class="value">${fmtNum(totalViews)}</div><div class="delta">за всё время</div></div>
+      <div class="studio-card"><div class="label">Лайки</div><div class="value">${fmtNum(totalLikes)}</div><div class="delta">на видео</div></div>
+      <div class="studio-card"><div class="label">Комментарии</div><div class="value">${fmtNum(totalComments)}</div><div class="delta">за всё время</div></div>
+    </div>
+    <div class="week-summary"><div><b>Ваши итоги за неделю</b><br><span style="font-size:11px;color:var(--muted)">${fmtNum(totalViews)} просмотров · ${videos.length} видео</span></div><div class="emoji">🦉</div></div>
+    <div class="chart-box">
+      <h3>Последнее видео</h3>
+      ${videos.length?`<div style="display:flex;gap:12px;align-items:center;cursor:pointer" onclick="location.hash='#/watch/${videos[0].id}'"><div style="width:100px;aspect-ratio:16/9;border-radius:8px;overflow:hidden;background:var(--bg3);flex-shrink:0">${videos[0].thumb?`<img src="${videos[0].thumb}" style="width:100%;height:100%;object-fit:cover">`:''}</div><div style="min-width:0"><b style="display:block;font-size:13px;margin-bottom:4px">${esc(videos[0].title)}</b><div style="font-size:11px;color:var(--muted)">👁 ${fmtNum(videos[0].views)} · 👍 ${fmtNum(videos[0].likes)} · 💬 ${(videos[0].comments||[]).length}</div></div></div>`:'<div class="empty-chart">Пока нет видео</div>'}
+    </div>`;
+}
+
+function renderStudioContent(videos,cfg){
+  return `
+    <h1 style="font-size:18px;margin-bottom:14px">Контент на канале</h1>
+    <div class="content-filters">
+      <input type="text" id="contentSearch" placeholder="🔍 Поиск по названию...">
+    </div>
+    <div id="contentBulkBar" style="padding:10px 12px;background:var(--bg3);border-radius:10px;margin-bottom:10px;display:none;align-items:center;gap:10px">
+      <span id="contentBulkCount" style="font-size:12px">Выбрано: 0</span>
+      <button class="filter-chip" onclick="bulkDeleteVideos()" style="color:#ff8888">🗑 Удалить</button>
+      <button class="filter-chip" onclick="clearSelection()">Отмена</button>
+    </div>
+    <div class="content-table" id="contentTable">
+      ${videos.length?videos.map(v=>`
+        <div class="content-row" data-vid="${v.id}" data-title="${esc(v.title.toLowerCase())}">
+          <input type="checkbox" class="check" data-check="${v.id}">
+          <div class="thumb" onclick="location.hash='#/watch/${v.id}'">${v.thumb?`<img src="${v.thumb}">`:''}</div>
+          <div class="body" onclick="location.hash='#/watch/${v.id}'">
+            <b>${esc(v.title)}</b>
+            <div class="meta">
+              <span>🌐 Для всех</span>
+              <span>${fmtNum(v.views)} просм.</span>
+              <span>👍 ${fmtNum(v.likes)}</span>
+              <span>💬 ${(v.comments||[]).length}</span>
+              <span>${fmtDate(v.date)}</span>
+            </div>
+          </div>
+          <button class="menu-btn" data-vmenu="${v.id}">⋮</button>
+        </div>
+      `).join(''):'<div class="empty-chart" style="padding:40px">Пока нет видео</div>'}
+    </div>`;
+}
+function attachContentHandlers(videos){
+  $$('[data-check]').forEach(cb=>cb.onchange=()=>{
+    const checked=$$('[data-check]:checked').length;
+    const bar=$('#contentBulkBar');
+    $('#contentBulkCount').textContent='Выбрано: '+checked;
+    if(checked>0){bar.style.display='flex';}else{bar.style.display='none';}
+  });
+  $$('[data-vmenu]').forEach(b=>b.onclick=async e=>{
+    e.stopPropagation();
+    document.querySelectorAll('.post-menu-popup').forEach(m=>m.remove());
+    const id=b.dataset.vmenu;
+    const rect=b.getBoundingClientRect();
+    const menu=document.createElement('div');
+    menu.className='post-menu-popup';
+    menu.style.cssText=`position:fixed;top:${Math.min(rect.bottom+4,window.innerHeight-200)}px;right:10px;`;
+    menu.innerHTML=`
+      <button onclick="location.hash='#/watch/${id}'">▶ Смотреть</button>
+      <button onclick="openVideoEditFromStudio('${id}')">✏ Редактировать</button>
+      <button onclick="copyVideoLink('${id}')">🔗 Копировать ссылку</button>
+      <button style="color:#ff8888" onclick="deleteVideoFromStudio('${id}')">🗑 Удалить</button>
+    `;
+    document.body.appendChild(menu);
+    const close=ev=>{if(!menu.contains(ev.target)){menu.remove();document.removeEventListener('click',close);}};
+    setTimeout(()=>document.addEventListener('click',close),50);
+  });
+  const inp=$('#contentSearch');
+  if(inp)inp.oninput=()=>{
+    const q=inp.value.trim().toLowerCase();
+    $$('.content-row').forEach(r=>{
+      r.style.display=q? (r.dataset.title.includes(q)?'':'none') : '';
+    });
+  };
+}
+function clearSelection(){$$('[data-check]').forEach(cb=>cb.checked=false);const bar=$('#contentBulkBar');if(bar)bar.style.display='none';}
+window.clearSelection=clearSelection;
+async function bulkDeleteVideos(){
+  const checked=$$('[data-check]:checked').map(cb=>cb.dataset.check);
+  if(!checked.length)return;
+  if(!confirm('Удалить '+checked.length+' видео?'))return;
+  for(const id of checked)await dbDel('videos',id);
+  toast('Удалено: '+checked.length);
+  render();
+}
+window.bulkDeleteVideos=bulkDeleteVideos;
+function copyVideoLink(id){
+  const url=location.origin+location.pathname+'#/watch/'+id;
+  if(navigator.clipboard)navigator.clipboard.writeText(url).then(()=>toast('Ссылка скопирована')).catch(()=>prompt('Ссылка:',url));
+  else prompt('Ссылка:',url);
+}
+window.copyVideoLink=copyVideoLink;
+async function deleteVideoFromStudio(id){
+  if(!confirm('Удалить видео?'))return;
+  await dbDel('videos',id);
+  toast('Удалено');
+  render();
+}
+window.deleteVideoFromStudio=deleteVideoFromStudio;
+async function openVideoEditFromStudio(id){
+  const v=await dbGet('videos',id);if(!v)return;
+  openModal(`
+    <h2>Редактировать видео</h2>
+    <div class="field"><label>Название</label><input type="text" id="veTitle" value="${esc(v.title)}" maxlength="120"></div>
+    <div class="field"><label>Описание</label><textarea id="veDesc" maxlength="5000">${esc(v.desc||'')}</textarea></div>
+    <div class="modal-actions"><button class="auth-btn" onclick="closeModal()">Отмена</button><button class="submit" id="veSave">Сохранить</button></div>
+  `);
+  $('#veSave').onclick=async()=>{
+    v.title=$('#veTitle').value.trim()||v.title;
+    v.desc=$('#veDesc').value.trim();
+    await dbPut('videos',v);
+    closeModal();toast('Сохранено');render();
+  };
+}
+window.openVideoEditFromStudio=openVideoEditFromStudio;
+
+function renderStudioAnalytics(videos,cfg){
+  const totalViews=videos.reduce((s,v)=>s+(v.views||0),0);
+  const totalLikes=videos.reduce((s,v)=>s+(v.likes||0),0);
+  const days=[];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);d.setHours(0,0,0,0);const next=new Date(d);next.setDate(next.getDate()+1);const dayVideos=videos.filter(v=>v.date>=d.getTime()&&v.date<next.getTime());const dayViews=dayVideos.reduce((s,v)=>s+(v.views||0),0);days.push({label:d.toLocaleDateString('ru-RU',{weekday:'short'}),views:dayViews});}
+  const maxV=Math.max(...days.map(d=>d.views),1);
+  const hasData=days.some(d=>d.views>0);
+  const topVideos=[...videos].sort((a,b)=>(b.views||0)-(a.views||0)).slice(0,10);
+  return `
+    <h1 style="font-size:18px;margin-bottom:14px">Аналитика канала</h1>
+    <div class="studio-stats">
+      <div class="studio-card"><div class="label">Просмотры</div><div class="value">${fmtNum(totalViews)}</div><div class="delta">за всё время</div></div>
+      <div class="studio-card"><div class="label">Лайки</div><div class="value">${fmtNum(totalLikes)}</div><div class="delta">на видео</div></div>
+      <div class="studio-card"><div class="label">Подписчики</div><div class="value">${fmtNum(cfg.subscribers||0)}</div><div class="delta">на канале</div></div>
+      <div class="studio-card"><div class="label">Видео</div><div class="value">${videos.length}</div><div class="delta">всего</div></div>
+    </div>
+    <div class="chart-box">
+      <h3>Просмотры за 7 дней <span>по дате загрузки</span></h3>
+      ${hasData?`<div class="chart">${days.map(d=>`<div class="bar" style="height:${Math.max(4,d.views/maxV*100)}%"></div>`).join('')}</div><div class="chart-labels">${days.map(d=>`<div>${d.label}</div>`).join('')}</div>`:'<div class="empty-chart">Пока нет данных для графика</div>'}
+    </div>
+    <div class="chart-box">
+      <h3>Топ-10 видео <span>по просмотрам</span></h3>
+      ${topVideos.length?topVideos.map((v,i)=>`
+        <div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+          <div style="font-size:14px;font-weight:700;color:var(--muted);width:22px;text-align:center">${i+1}</div>
+          <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(v.title)}</div><div style="font-size:10px;color:var(--muted);margin-top:2px">👁 ${fmtNum(v.views)} · 👍 ${fmtNum(v.likes)} · 💬 ${(v.comments||[]).length}</div></div>
+        </div>
+      `).join(''):'<div class="empty-chart">Пока нет видео</div>'}
+    </div>`;
+}
+
+function renderStudioComments(videos,cfg){
+  const all=[];
+  videos.forEach(v=>{(v.comments||[]).forEach(c=>all.push({...c,videoId:v.id,videoTitle:v.title}));});
+  all.sort((a,b)=>b.date-a.date);
+  return `
+    <h1 style="font-size:18px;margin-bottom:14px">Последние комментарии</h1>
+    ${all.length?all.slice(0,50).map(c=>`
+      <div class="content-row">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#ff0033,#ff8a00);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;font-weight:700;flex-shrink:0">${esc((c.author||'Г')[0].toUpperCase())}</div>
+        <div class="body">
+          <b>${esc(c.author)}</b>
+          <div style="font-size:12px;color:var(--text);margin:4px 0;word-break:break-word">${esc(c.text)}</div>
+          <div class="meta"><span>${timeAgo(c.date)}</span><span>К видео: ${esc(c.videoTitle)}</span></div>
+        </div>
+      </div>
+    `).join(''):'<div class="empty" style="padding:40px 20px"><h2>Комментариев пока нет</h2></div>'}`;
+}
+
+async function delVideo(id){if(!confirm('Удалить видео?'))return;await dbDel('videos',id);render();}
+window.delVideo = delVideo;
+function openDeleteChannelModal(){
+  openModal(`<div style="text-align:center;font-size:40px;margin-bottom:12px">⚠️</div><div style="font-size:18px;font-weight:700;text-align:center;margin-bottom:8px">Удалить канал?</div><div style="font-size:13px;color:var(--muted);line-height:1.5;text-align:center;margin-bottom:18px">Все видео, посты и данные будут стёрты.<br>Firebase-аккаунт останется.</div><div style="display:flex;flex-direction:column;gap:8px"><button style="background:var(--bg3);border:none;padding:12px 20px;border-radius:22px;font-size:14px;font-weight:600;width:100%;color:var(--text);cursor:pointer" onclick="closeModal()">Отмена</button><button style="background:#8a2020;color:#fff;border:none;padding:12px 20px;border-radius:22px;font-size:14px;font-weight:600;width:100%;cursor:pointer" onclick="confirmDeleteChannel()">Да, удалить канал</button></div>`);
+}
+window.openDeleteChannelModal = openDeleteChannelModal;
+async function confirmDeleteChannel(){
+  const allVideos=await dbGetAll('videos');
+  for(const v of allVideos)await dbDel('videos',v.id);
+  const allPosts=await dbGetAll('posts');
+  for(const p of allPosts)await dbDel('posts',p.id);
+  localStorage.removeItem('vidtube_channel_'+(currentFBUser?.uid||'guest'));
+  localStorage.removeItem('vidtube_notifs');
+  closeModal();toast('Канал удалён');setTimeout(()=>{location.hash='#/';location.reload();},800);
+}
+window.confirmDeleteChannel = confirmDeleteChannel;
+
+function openExtendedSettings(){
+  const cfg=getChannelConfig();
+  const videos=window._studioVideos||[];
+  const previewAvatar=cfg.avatar.type==='image'&&cfg.avatar.value?`<img src="${cfg.avatar.value}" style="width:100%;height:100%;object-fit:cover">`:esc(cfg.avatar.value||'🎬');
+  const previewBanner=cfg.banner.type==='image'&&cfg.banner.value?`background-image:url('${cfg.banner.value}');background-size:cover;background-position:center`:`background:${cfg.banner.value||''}`;
+  openModal(`
+    <h2>Расширенные настройки канала</h2>
+    <div style="border-radius:12px;overflow:hidden;margin-bottom:12px">
+      <div style="height:70px;${previewBanner}"></div>
+      <div style="margin-top:-28px;margin-left:12px;width:56px;height:56px;border-radius:50%;border:3px solid var(--bg2);background:linear-gradient(135deg,#ff0033,#ff8a00);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;font-weight:700;overflow:hidden;position:relative;z-index:1">${previewAvatar}</div>
+    </div>
+    <div class="field"><label>Название канала</label><input type="text" id="mName" value="${esc(cfg.name)}" maxlength="30"></div>
+    <div class="field"><label>Псевдоним</label><input type="text" id="mHandle" value="${esc(cfg.handle)}" maxlength="30"></div>
+    <div class="field"><label>Описание</label><textarea id="mDesc" maxlength="1000">${esc(cfg.desc)}</textarea></div>
+    <div class="field"><label>Аватар (эмодзи)</label><input type="text" id="mEmoji" value="${esc(cfg.avatar.type==='emoji'?cfg.avatar.value:'')}" maxlength="4" placeholder="🎬"><input type="file" id="mAvatarFile" accept="image/*" style="margin-top:6px"></div>
+    <div class="field"><label>Баннер</label><input type="file" id="mBannerFile" accept="image/*"></div>
+    <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:14px">
+      <h3 style="font-size:13px;margin-bottom:10px">📌 Закреплённые видео</h3>
+      <div style="margin-bottom:10px">
+        <label style="font-size:11px;color:var(--muted);font-weight:600;display:block;margin-bottom:5px">Трейлер (для новых зрителей)</label>
+        <select id="mTrailer" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-size:12px;outline:none">
+          <option value="">— Не показывать —</option>
+          ${videos.map(v=>`<option value="${v.id}" ${cfg.trailerId===v.id?'selected':''}>${esc(v.title)}</option>`).join('')}
+        </select>
+      </div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:11px;color:var(--muted);font-weight:600;display:block;margin-bottom:5px">Рекомендованное (для подписчиков)</label>
+        <select id="mFeatured" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 11px;color:var(--text);font-size:12px;outline:none">
+          <option value="">— Не показывать —</option>
+          ${videos.map(v=>`<option value="${v.id}" ${cfg.featuredId===v.id?'selected':''}>${esc(v.title)}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions"><button class="auth-btn" onclick="closeModal()">Отмена</button><button class="submit" id="mSave">Сохранить</button></div>
+  `);
+  let avatar={...cfg.avatar},banner={...cfg.banner};
+  $('#mEmoji').oninput=()=>{const v=$('#mEmoji').value.trim();if(v)avatar={type:'emoji',value:v};};
+  $('#mAvatarFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;if(f.size>2*1024*1024){toast('Файл > 2 МБ');return;}avatar={type:'image',value:await readAsDataURL(f)};};
+  $('#mBannerFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;if(f.size>4*1024*1024){toast('Файл > 4 МБ');return;}banner={type:'image',value:await readAsDataURL(f)};};
+  $('#mSave').onclick=async()=>{
+    const name=$('#mName').value.trim()||cfg.name;
+    let handle=$('#mHandle').value.trim();if(!handle)handle=makeHandle(name);if(!handle.startsWith('@'))handle='@'+handle;
+    setChannelConfig({...cfg,name,handle,desc:$('#mDesc').value.trim(),avatar,banner,trailerId:$('#mTrailer').value||null,featuredId:$('#mFeatured').value||null});
+    if(currentFBUser && currentFBUser.displayName !== name){
+      try { await updateProfile(currentFBUser, { displayName: name }); } catch(e){}
+      localStorage.setItem('vidtube_name_'+currentFBUser.uid, name);
+    }
+    closeModal();render();toast('Сохранено');
+  };
+}
+window.openExtendedSettings = openExtendedSettings;
+function openChannelEdit(){openExtendedSettings();}
+window.openChannelEdit = openChannelEdit;
+
+function renderSettings(){
+  const t=getTheme();
+  app.innerHTML=`
+    <div class="settings">
+      <h1>Настройки</h1>
+      <p class="sub">Внешний вид и аккаунт</p>
+      <div class="settings-block-title">Внешний вид</div>
+      <div class="settings-block">
+        <div class="settings-row" onclick="setTheme('dark')"><div class="left"><b>🌙 Тёмная</b><div class="hint">Как YouTube</div></div><div class="radio ${t==='dark'?'on':''}"></div></div>
+        <div class="settings-row" onclick="setTheme('light')"><div class="left"><b>☀️ Светлая</b><div class="hint">Светлый фон, тёмный текст</div></div><div class="radio ${t==='light'?'on':''}"></div></div>
+      </div>
+      <div class="settings-block-title">Аккаунт</div>
+      <div class="settings-block">
+        <div class="settings-row" onclick="logoutConfirm()"><div class="left"><b>Выйти</b><div class="hint">Сменить пользователя</div></div></div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:20px">${BRAND.name} ${BRAND.version}</div>
+    </div>`;
+}
+window.renderSettings = renderSettings;
+function logoutConfirm(){if(confirm('Выйти из аккаунта?'))logout();}
+window.logoutConfirm = logoutConfirm;
+
+function renderCreate(){
+  app.innerHTML=`
+    <div class="page">
+      <h1>Создать видео</h1>
+      <p class="sub">Загрузите файл с устройства</p>
+      <form id="createForm">
+        <div class="field"><label>Видеофайл *</label><input type="file" id="fVideo" accept="video/*" required></div>
+        <div class="field"><label>Обложка</label><input type="file" id="fThumb" accept="image/*"></div>
+        <div class="field"><label>Название *</label><input type="text" id="fTitle" maxlength="120" required></div>
+        <div class="field"><label>Описание (можно #хештеги)</label><textarea id="fDesc" maxlength="5000"></textarea></div>
+        <button type="submit" class="submit" id="submitBtn">Опубликовать</button>
+      </form>
+    </div>`;
+  $('#createForm').onsubmit=async e=>{
+    e.preventDefault();
+    const btn=$('#submitBtn');const file=$('#fVideo').files[0];
+    if(!file){alert('Выберите файл');return;}
+    btn.disabled=true;btn.textContent='Загрузка...';
+    try{
+      const thumbFile=$('#fThumb').files[0];
+      const thumb=thumbFile?await readAsDataURL(thumbFile):null;
+      const video={id:'v'+Date.now(),title:$('#fTitle').value.trim()||'Без названия',desc:$('#fDesc').value.trim(),blob:file,thumb,likes:0,dislikes:0,liked:false,disliked:false,views:0,viewedBy:[],watchSeconds:0,duration:0,comments:[],date:Date.now()};
+      await dbPut('videos',video);
+      addNotif('video','Вы загрузили видео "'+video.title+'"',{videoId:video.id});
+      toast('Видео опубликовано!');
+      location.hash='#/channel/videos';
+    }catch(err){console.error(err);alert('Ошибка: '+err.message);btn.disabled=false;btn.textContent='Опубликовать';}
+  };
+}
+window.renderCreate = renderCreate;
+
+async function renderWatch(id){
+  const v=await dbGet('videos',id);
+  if(!v){app.innerHTML=`<div class="empty"><h2>Видео не найдено</h2><button class="submit" onclick="location.hash='#/'">На главную</button></div>`;return;}
+  const u=getCurrentUser();
+  const userId=u?.uid||'guest_'+(localStorage.getItem('guestId')||(localStorage.setItem('guestId','g'+Date.now()),localStorage.getItem('guestId')));
+  v.viewedBy=v.viewedBy||[];
+  if(!v.viewedBy.includes(userId)){v.viewedBy.push(userId);v.views=(v.views||0)+1;await dbPut('videos',v);}
+  const url=makeUrl(v.blob);
+  const comments=v.comments||[];
+  const cfg=getChannelConfig();
+  app.innerHTML=`
+  <div class="watch" id="watchRoot">
+    <div class="player-wrap" id="playerWrap">
+      <video id="videoEl" src="${url}" ${v.thumb?`poster="${v.thumb}"`:''} playsinline preload="metadata" autoplay muted></video>
+      <div class="bottom-controls">
+        <div class="progress" id="progress"><div class="buffered" id="buffered"></div><div class="played" id="played"></div></div>
+        <div class="ctrl-row"><button data-act="play" id="playBtn">▶</button><button data-act="back10">⏪</button><button data-act="fwd10">⏩</button><div class="time"><span id="tCur">0:00</span> / <span id="tDur">0:00</span></div><div class="spacer"></div><button data-act="pip">⧉</button><button data-act="fullscreen">⛶</button></div>
+      </div>
+    </div>
+    <h1>${renderHashtags(v.title)}</h1>
+    <div style="padding:0 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px">
+      <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#ff0033,#ff8a00);display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;font-weight:700;overflow:hidden">${avatarHTML()}</div>
+      <div style="flex:1"><div style="font-weight:600;font-size:13px">${esc(cfg.name||'Мой канал')}</div><div style="font-size:11px;color:var(--muted)">${fmtNum(cfg.subscribers||0)} подписчиков</div></div>
+    </div>
+    <div class="action-row">
+      <button class="chip ${v.liked?'liked':''}" id="likeBtn">👍 <span id="likeCount">${fmtNum(v.likes)}</span></button>
+      <button class="chip ${v.disliked?'disliked':''}" id="dislikeBtn">👎 <span id="dislikeCount">${fmtNum(v.dislikes||0)}</span></button>
+      <button class="chip" id="shareBtn">↗ Поделиться</button>
+      <button class="chip" id="delBtn">🗑 Удалить</button>
+    </div>
+    <div style="background:var(--bg2);border-radius:12px;padding:12px 14px;margin:12px 14px;font-size:13px">
+      <div style="color:var(--muted);font-size:12px;margin-bottom:6px;font-weight:600">${fmtNum(v.views)} просмотров · ${timeAgo(v.date)}</div>
+      ${v.desc?`<div style="white-space:pre-wrap;word-break:break-word">${renderHashtags(v.desc)}</div>`:''}
+    </div>
+    <div class="comments" id="commentsRoot">
+      <h3 style="font-size:14px;margin-bottom:12px" id="cCount">${comments.filter(c=>!c.parentId).length} ${plural(comments.filter(c=>!c.parentId).length,'комментарий','комментария','комментариев')}</h3>
+      ${u?`<form id="commentForm" style="display:flex;gap:10px;margin-bottom:18px"><div class="avatar">${esc((u.name||u.email)[0].toUpperCase())}</div><div style="flex:1"><input id="cText" placeholder="Введите комментарий..." maxlength="500" style="width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);padding:8px 2px;outline:none;font-size:13px"><div style="display:flex;justify-content:flex-end;margin-top:6px"><button type="submit" class="submit" style="padding:7px 16px;font-size:12px;min-height:34px">Отправить</button></div></div></form>`:`<div style="background:var(--bg2);border-radius:12px;padding:12px;margin-bottom:18px;text-align:center;font-size:12px;color:var(--muted)"><a onclick="openLoginModal()" style="color:var(--hashtag);cursor:pointer">Войдите</a>, чтобы оставить комментарий</div>`}
+      <div id="commentList">${renderCommentList(comments,u)}</div>
+    </div>
+  </div>`;
+  attachHashtagHandlers(app);
+  setupPlayer($('#videoEl'),$('#playerWrap'));
+
+  $('#likeBtn').onclick=()=>{if(!u){openLoginModal();return;}
+    const wasLiked=$('#likeBtn').classList.contains('liked');
+    const wasDisliked=$('#dislikeBtn').classList.contains('disliked');
+    const curLikes=parseInt($('#likeCount').textContent.replace(/[^0-9]/g,''))||0;
+    const curDislikes=parseInt($('#dislikeCount').textContent.replace(/[^0-9]/g,''))||0;
+    $('#likeBtn').classList.toggle('liked',!wasLiked);
+    if(!wasLiked&&wasDisliked){$('#dislikeBtn').classList.remove('disliked');$('#dislikeCount').textContent=fmtNum(Math.max(0,curDislikes-1));}
+    $('#likeCount').textContent=fmtNum(wasLiked?Math.max(0,curLikes-1):curLikes+1);
+    dbGet('videos',id).then(fresh=>{const wL=!!fresh.liked,wD=!!fresh.disliked;fresh.liked=!wL;fresh.likes=(fresh.likes||0)+(fresh.liked?1:-1);if(fresh.liked&&wD){fresh.disliked=false;fresh.dislikes=Math.max(0,(fresh.dislikes||0)-1);}return dbPut('videos',fresh);}).catch(()=>{});
+  };
+  $('#dislikeBtn').onclick=()=>{if(!u){openLoginModal();return;}
+    const wasLiked=$('#likeBtn').classList.contains('liked');
+    const wasDisliked=$('#dislikeBtn').classList.contains('disliked');
+    const curLikes=parseInt($('#likeCount').textContent.replace(/[^0-9]/g,''))||0;
+    const curDislikes=parseInt($('#dislikeCount').textContent.replace(/[^0-9]/g,''))||0;
+    $('#dislikeBtn').classList.toggle('disliked',!wasDisliked);
+    if(!wasDisliked&&wasLiked){$('#likeBtn').classList.remove('liked');$('#likeCount').textContent=fmtNum(Math.max(0,curLikes-1));}
+    $('#dislikeCount').textContent=fmtNum(wasDisliked?Math.max(0,curDislikes-1):curDislikes+1);
+    dbGet('videos',id).then(fresh=>{const wL=!!fresh.liked,wD=!!fresh.disliked;fresh.disliked=!wD;fresh.dislikes=(fresh.dislikes||0)+(fresh.disliked?1:-1);if(fresh.disliked&&wL){fresh.liked=false;fresh.likes=Math.max(0,(fresh.likes||0)-1);}return dbPut('videos',fresh);}).catch(()=>{});
+  };
+  $('#shareBtn').onclick=()=>{const shareUrl=`https://${location.host}/#/watch/${id}`;if(navigator.share)navigator.share({title:v.title,url:shareUrl}).catch(()=>{});else if(navigator.clipboard&&location.protocol==='https:'){navigator.clipboard.writeText(shareUrl);toast('Ссылка скопирована');}else{prompt('Скопируйте ссылку:',shareUrl);}};
+  $('#delBtn').onclick=async()=>{if(!u){openLoginModal();return;}if(!confirm('Удалить видео?'))return;await dbDel('videos',id);location.hash='#/';};
+  if($('#commentForm'))$('#commentForm').onsubmit=async e=>{e.preventDefault();const text=$('#cText').value.trim();if(!text)return;const fresh=await dbGet('videos',id);fresh.comments=fresh.comments||[];const newC={id:'c'+Date.now(),author:u.name||u.email,authorId:u.uid,text,date:Date.now(),likes:0,dislikes:0,hearted:false,pinned:false,likedBy:[],dislikedBy:[],parentId:null};fresh.comments.push(newC);await dbPut('videos',fresh);$('#noComments')?.remove();$('#commentList').insertAdjacentHTML('afterbegin',renderCommentTree(newC,fresh.comments,u));attachCommentHandlers(null,u,id);$('#cText').value='';const total=fresh.comments.filter(c=>!c.parentId).length;$('#cCount').textContent=total+' '+plural(total,'комментарий','комментария','комментариев');};
+  attachCommentHandlers(v,u,id);
+}
+window.renderWatch = renderWatch;
+
+function renderCommentList(allComments,currentUser){
+  const roots=allComments.filter(c=>!c.parentId);
+  const pinned=roots.filter(c=>c.pinned);
+  const regular=roots.filter(c=>!c.pinned);
+  const sorted=[...pinned,...regular];
+  if(!sorted.length)return'<p style="color:var(--muted);font-size:13px" id="noComments">Комментариев пока нет. Будьте первым!</p>';
+  return sorted.map(c=>renderCommentTree(c,allComments,currentUser)).join('');
+}
+function renderCommentTree(c,allComments,currentUser){
+  const replies=allComments.filter(x=>x.parentId===c.id);
+  const cfg=getChannelConfig();
+  const isOwner=currentUser&&(currentUser.name===cfg.name);
+  const isAuthor=currentUser&&c.authorId===currentUser.uid;
+  const canPin=isOwner||isAuthor;const canHeart=isOwner;const canDelete=isOwner||isAuthor;
+  return`<div class="comment ${c.pinned?'pinned':''}" data-comment="${c.id}"><div class="avatar">${esc((c.author||'Г')[0].toUpperCase())}</div><div class="body">${c.pinned?'<div style="font-size:10px;color:var(--muted);font-weight:600;margin-bottom:5px">📌 Закреплено автором</div>':''}<div class="head"><b>${esc(c.author)}</b>${isOwner?'<span class="author-badge">АВТОР</span>':''}<span>${timeAgo(c.date)}</span>${c.hearted?'<span class="heart">❤</span>':''}</div><p>${renderHashtags(c.text)}</p><div class="comment-actions"><button data-act="clike" data-id="${c.id}" class="${(c.likedBy||[]).includes(currentUser?.uid)?'liked':''}">👍 <span data-count="clike-${c.id}">${fmtNum(c.likes||0)}</span></button><button data-act="cdislike" data-id="${c.id}" class="${(c.dislikedBy||[]).includes(currentUser?.uid)?'disliked':''}">👎 <span data-count="cdislike-${c.id}">${fmtNum(c.dislikes||0)}</span></button>${currentUser?`<button data-act="reply" data-id="${c.id}">Ответить</button>`:''}${(canPin||canHeart||canDelete)?`<button class="menu-btn" data-act="menu" data-id="${c.id}">⋮</button>`:''}</div><div id="replyBox-${c.id}"></div>${replies.length?`<div class="replies">${replies.map(r=>renderCommentTree(r,allComments,currentUser)).join('')}</div>`:''}</div></div>`;
+}
+function attachCommentHandlers(v,u,videoId){
+  $$('#commentList [data-act]').forEach(btn=>{
+    btn.onclick=async e=>{
+      e.stopPropagation();
+      const act=btn.dataset.act;const cid=btn.dataset.id;
+      if(act==='menu')return openCommentMenu(btn,cid,videoId,u);
+      if(act==='reply')return openReplyBox(cid,videoId,u);
+      if(act==='clike'||act==='cdislike')return toggleCommentVote(videoId,cid,act==='clike'?'like':'dislike',u);
+    };
+  });
+}
+async function toggleCommentVote(videoId,commentId,type,u){
+  if(!u){openLoginModal();return;}
+  const btn=document.querySelector(`[data-act="${type==='like'?'clike':'cdislike'}"][data-id="${commentId}"]`);
+  const otherType=type==='like'?'cdislike':'clike';
+  const otherBtn=document.querySelector(`[data-act="${otherType}"][data-id="${commentId}"]`);
+  const countSpan=document.querySelector(`[data-count="${type==='like'?'clike':'cdislike'}-${commentId}"]`);
+  const otherCountSpan=document.querySelector(`[data-count="${otherType}-${commentId}"]`);
+  const wasActive=btn.classList.contains(type==='like'?'liked':'disliked');
+  const otherWasActive=otherBtn?.classList.contains(type==='like'?'disliked':'liked');
+  if(type==='like'){btn.classList.toggle('liked',!wasActive);if(otherBtn&&otherWasActive)otherBtn.classList.remove('disliked');}
+  else{btn.classList.toggle('disliked',!wasActive);if(otherBtn&&otherWasActive)otherBtn.classList.remove('liked');}
+  const curCount=parseInt(countSpan.textContent.replace(/[^0-9]/g,''))||0;
+  countSpan.textContent=fmtNum(wasActive?Math.max(0,curCount-1):curCount+1);
+  if(otherWasActive&&otherCountSpan){const oc=parseInt(otherCountSpan.textContent.replace(/[^0-9]/g,''))||0;otherCountSpan.textContent=fmtNum(Math.max(0,oc-1));}
+  const fresh=await dbGet('videos',videoId);
+  const c=(fresh.comments||[]).find(x=>x.id===commentId);if(!c)return;
+  c.likedBy=c.likedBy||[];c.dislikedBy=c.dislikedBy||[];
+  const inLiked=c.likedBy.includes(u.uid);const inDisliked=c.dislikedBy.includes(u.uid);
+  if(type==='like'){if(inLiked)c.likedBy=c.likedBy.filter(e=>e!==u.uid);else{c.likedBy.push(u.uid);c.dislikedBy=c.dislikedBy.filter(e=>e!==u.uid);}}
+  else{if(inDisliked)c.dislikedBy=c.dislikedBy.filter(e=>e!==u.uid);else{c.dislikedBy.push(u.uid);c.likedBy=c.likedBy.filter(e=>e!==u.uid);}}
+  c.likes=c.likedBy.length;c.dislikes=c.dislikedBy.length;
+  await dbPut('videos',fresh);
+}
+function openReplyBox(commentId,videoId,u){
+  if(!u){openLoginModal();return;}
+  const box=document.getElementById('replyBox-'+commentId);if(!box)return;
+  if(box.innerHTML){box.innerHTML='';return;}
+  box.innerHTML=`<div class="reply-box"><div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#ff0033,#ff8a00);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:700">${esc((u.name||u.email)[0].toUpperCase())}</div><div style="flex:1"><input type="text" id="reply-${commentId}" placeholder="Ответить..." maxlength="500"><div class="reply-actions"><button data-cancel="${commentId}">Отмена</button><button class="send" data-send="${commentId}">Ответить</button></div></div></div>`;
+  const inp=document.getElementById('reply-'+commentId);inp.focus();
+  $('[data-cancel]',box).onclick=()=>{box.innerHTML='';};
+  const send=async()=>{const text=inp.value.trim();if(!text)return;const fresh=await dbGet('videos',videoId);fresh.comments=fresh.comments||[];fresh.comments.push({id:'c'+Date.now(),author:u.name||u.email,authorId:u.uid,text,date:Date.now(),likes:0,dislikes:0,hearted:false,pinned:false,likedBy:[],dislikedBy:[],parentId:commentId});await dbPut('videos',fresh);const list=$('#commentList');if(list){list.innerHTML=renderCommentList(fresh.comments,u);attachCommentHandlers(null,u,videoId);}};
+  $('[data-send]',box).onclick=send;
+  inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();send();}};
+}
+function openCommentMenu(btn,commentId,videoId,u){
+  document.querySelectorAll('.comment-menu').forEach(m=>m.remove());
+  const rect=btn.getBoundingClientRect();
+  const menu=document.createElement('div');
+  menu.className='comment-menu';
+  menu.style.cssText=`position:fixed;top:${Math.min(rect.bottom+4,window.innerHeight-220)}px;right:10px;`;
+  (async()=>{
+    const fresh=await dbGet('videos',videoId);
+    const c=(fresh.comments||[]).find(x=>x.id===commentId);if(!c)return;
+    const cfg=getChannelConfig();
+    const isOwner=u&&(u.name===cfg.name);
+    const isAuthor=u&&c.authorId===u.uid;
+    const canPin=isOwner||isAuthor;const canHeart=isOwner;const canDelete=isOwner||isAuthor;
+    let html='';
+    if(canPin)html+=`<button data-mact="pin" data-id="${commentId}">${c.pinned?'📌 Открепить':'📌 Закрепить'}</button>`;
+    if(canHeart)html+=`<button data-mact="heart" data-id="${commentId}">${c.hearted?'❤ Убрать сердечко':'❤ Поставить сердечко'}</button>`;
+    if(canDelete)html+=`<button data-mact="delete" data-id="${commentId}" style="color:#ff8888">🗑 Удалить</button>`;
+    if(!html)html='<button disabled style="color:#888">Нет действий</button>';
+    menu.innerHTML=html;
+    menu.querySelectorAll('[data-mact]').forEach(b=>b.onclick=async()=>{
+      const act=b.dataset.mact;menu.remove();
+      const fr=await dbGet('videos',videoId);if(!fr.comments)fr.comments=[];
+      if(act==='delete'){fr.comments=fr.comments.filter(x=>x.id!==commentId&&x.parentId!==commentId);await dbPut('videos',fr);document.querySelector(`[data-comment="${commentId}"]`)?.remove();const total=fr.comments.filter(x=>!x.parentId).length;$('#cCount').textContent=total+' '+plural(total,'комментарий','комментария','комментариев');if(!total)$('#commentList').innerHTML='<p style="color:var(--muted);font-size:13px" id="noComments">Комментариев пока нет. Будьте первым!</p>';}
+      else if(act==='pin'){const cm=fr.comments.find(x=>x.id===commentId);if(cm){fr.comments.forEach(x=>{if(x.id!==commentId)x.pinned=false;});cm.pinned=!cm.pinned;await dbPut('videos',fr);$('#commentList').innerHTML=renderCommentList(fr.comments,u);attachCommentHandlers(null,u,videoId);}}
+      else if(act==='heart'){const cm=fr.comments.find(x=>x.id===commentId);if(cm){cm.hearted=!cm.hearted;await dbPut('videos',fr);$('#commentList').innerHTML=renderCommentList(fr.comments,u);attachCommentHandlers(null,u,videoId);}}
+    });
+    document.body.appendChild(menu);
+    const close=e=>{if(!menu.contains(e.target)){menu.remove();document.removeEventListener('click',close);}};
+    setTimeout(()=>document.addEventListener('click',close),50);
+  })();
+}
+
+function setupPlayer(video,wrap){
+  const played=$('#played',wrap),buffered=$('#buffered',wrap),tCur=$('#tCur',wrap),tDur=$('#tDur',wrap),progress=$('#progress',wrap);
+  const btn=act=>wrap.querySelector(`[data-act="${act}"]`);
+  video.addEventListener('loadedmetadata',()=>{tDur.textContent=fmtTime(video.duration);});
+  video.addEventListener('play',()=>{$('#playBtn').textContent='⏸';showCtrl();});
+  video.addEventListener('pause',()=>{$('#playBtn').textContent='▶';showCtrl(true);});
+  video.addEventListener('timeupdate',()=>{const d=video.duration||0;played.style.width=d?(video.currentTime/d*100)+'%':'0';tCur.textContent=fmtTime(video.currentTime);if(video.buffered.length){const b=d?(video.buffered.end(video.buffered.length-1)/d*100):0;buffered.style.width=b+'%';}});
+  const seek=e=>{const r=progress.getBoundingClientRect();const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left;if(isFinite(video.duration))video.currentTime=Math.max(0,Math.min(1,x/r.width))*video.duration;};
+  let dragging=false;
+  on(progress,'mousedown',e=>{dragging=true;seek(e);e.preventDefault();});
+  on(progress,'touchstart',e=>{dragging=true;seek(e);},{passive:true});
+  on(window,'mousemove',e=>{if(dragging)seek(e);});
+  on(window,'touchmove',e=>{if(dragging)seek(e);},{passive:true});
+  on(window,'mouseup',()=>dragging=false);on(window,'touchend',()=>dragging=false);
+  on(btn('play'),'click',()=>video.paused?video.play():video.pause());
+  on(btn('back10'),'click',()=>video.currentTime=Math.max(0,video.currentTime-10));
+  on(btn('fwd10'),'click',()=>video.currentTime=Math.min(video.duration||0,video.currentTime+10));
+  on(btn('pip'),'click',async()=>{try{if(document.pictureInPictureElement)await document.exitPictureInPicture();else await video.requestPictureInPicture();}catch{}});
+  on(btn('fullscreen'),'click',()=>{if(document.fullscreenElement)document.exitFullscreen();else(wrap.requestFullscreen||wrap.webkitRequestFullscreen||wrap.webkitEnterFullscreen).call(wrap);});
+  let hideTimer;
+  function showCtrl(stay=false){wrap.classList.add('show-controls');clearTimeout(hideTimer);if(!stay&&!video.paused)hideTimer=setTimeout(()=>wrap.classList.remove('show-controls'),2500);}
+  on(wrap,'mousemove',()=>showCtrl());on(wrap,'touchstart',()=>showCtrl());
+  on(video,'click',()=>video.paused?video.play():video.pause());
+  on(video,'dblclick',()=>btn('fullscreen').click());
+  showCtrl(true);
+  video.muted=true;
+  const tryPlay=()=>{
+    const p=video.play();
+    if(p!==undefined){
+      p.then(()=>{setTimeout(()=>{video.muted=false;},300);}).catch(()=>{
+        const unmute=()=>{video.muted=false;video.play().catch(()=>{});document.removeEventListener('click',unmute);document.removeEventListener('touchstart',unmute);};
+        document.addEventListener('click',unmute,{once:true});
+        document.addEventListener('touchstart',unmute,{once:true});
+      });
+    }
+  };
+  if(video.readyState>=2)tryPlay();
+  else video.addEventListener('loadeddata',tryPlay,{once:true});
+}
+
+onAuthStateChanged(auth,(user)=>{
+  currentFBUser=user;
+  renderAuthArea();
+  render();
+});
+
+(async function init(){
+  try{await openDB();if(!location.hash)location.hash='#/';render();}
+  catch(err){console.error(err);app.innerHTML=`<div class="empty"><h2>Ошибка</h2><p>${esc(err.message)}</p></div>`;}
+})();
+</script>
+</body>
+</html>
